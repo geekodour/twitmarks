@@ -5,7 +5,7 @@ function generateNavListItem(name, icon){
   var s2 = document.createElement('span');
   li.className = "kk"; // and bookmarks spec class here
   li.addEventListener("click", onClick, false);
-  a.className = "js-tooltip js-dynamic-tooltip global-bookmark-nav"; // add a bookmark specific class here
+  a.className = "js-tooltip js-dynamic-tooltip global-bookmark-nav global-dm-nav"; // add a bookmark specific class here
   s1.className = "Icon Icon--heartBadge Icon--large";
   s2.className = "text";
   s2.innerText = "Bookmarks";
@@ -22,20 +22,25 @@ function jegehBana(){
   //div1.className = 'content-header';
   //div1.innerHTML = "<p>Bookmarks</p>";
   //container.
-  //var container = document.querySelector("#xdm_default1532_provider");
+  var container = document.querySelector(".DMDialog.modal-container");
+  var container_o = document.querySelector(".modal-overlay");
+  setTimeout(function(){
+    container.style.display = 'none';
+    container_o.style.display = 'none';
+  },500);
+  console.log(container)
   //console.log(container);
 
 }
 
+function sendToExtension() {
+  chrome.runtime.sendMessage({funcName: "getAuth"}, function(response) {
+    console.log(response.ack);
+  });
+}
+
 function onClick(){
   jegehBana();
-
-  function sendToExtension() {
-    console.log('Sending message');
-    chrome.runtime.sendMessage({ext: "myExtension"}, function(response) {
-      console.log(response.ack);
-    });
-  }
   sendToExtension();
 }
 
