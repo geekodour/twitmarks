@@ -1,6 +1,3 @@
-/**
- * Place your custom CSS styles here.
- **/
-body {
-  background: black;
+.global-bookmark-nav {
+  cursor: pointer;
 }
