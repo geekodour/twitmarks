@@ -21,6 +21,7 @@
   },
   "permissions": [
     "activeTab",
+    "webRequest",
     "contentSettings",
     "cookies",
     "https://*/*",

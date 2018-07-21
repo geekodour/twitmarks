@@ -22,10 +22,21 @@ function jegehBana(){
   //div1.className = 'content-header';
   //div1.innerHTML = "<p>Bookmarks</p>";
   //container.
+  //var container = document.querySelector("#xdm_default1532_provider");
+  //console.log(container);
+
 }
 
 function onClick(){
   jegehBana();
+
+  function sendToExtension() {
+    console.log('Sending message');
+    chrome.runtime.sendMessage({ext: "myExtension"}, function(response) {
+      console.log(response.ack);
+    });
+  }
+  sendToExtension();
 }
 
 
