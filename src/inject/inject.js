@@ -31,9 +31,20 @@ function jegehBana(){
 
 }
 
+function fetchBookmarks(headers) {
+  const url = "https://api.twitter.com/2/timeline/bookmark.json";
+  const h = new Headers();
+  headers.forEach((o)=>{ h.append(o.name, o.value); })
+  const request = new Request(url, { headers: h });
+  fetch(request,{credentials: "same-origin"})
+    .then(function(e) { console.log(e.json()) })
+    .catch(function(err){console.log(err)})
+}
+
 function sendToExtension() {
   chrome.runtime.sendMessage({funcName: "getAuth"}, function(response) {
     let headers = response.headers;
+    fetchBookmarks(headers);
   });
 }
 
