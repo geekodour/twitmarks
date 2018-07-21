@@ -3,9 +3,9 @@ function generateNavListItem(name, icon, onClick){
   var a = document.createElement('a');
   var s1 = document.createElement('span');
   var s2 = document.createElement('span');
-  li.className = "dm-nav";
-  a.className = "js-tooltip js-dynamic-tooltip global-dm-nav";
-  s1.className = "Icon Icon--dm Icon--large";
+  li.className = "kk"; // and bookmarks spec class here
+  a.className = "js-tooltip js-dynamic-tooltip"; // add a bookmark specific class here
+  s1.className = "Icon Icon--heartBadge Icon--large";
   s2.className = "text";
   s2.innerText = "Bookmarks";
   a.appendChild(s1);
