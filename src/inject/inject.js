@@ -28,14 +28,12 @@ function jegehBana(){
     container.style.display = 'none';
     container_o.style.display = 'none';
   },500);
-  console.log(container)
-  //console.log(container);
 
 }
 
 function sendToExtension() {
   chrome.runtime.sendMessage({funcName: "getAuth"}, function(response) {
-    console.log(response.ack);
+    let headers = response.headers;
   });
 }
 
