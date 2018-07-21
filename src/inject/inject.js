@@ -1,3 +1,4 @@
+// Utility Functions
 function generateNavListItem(name, icon){
   var li = document.createElement('li');
   var a = document.createElement('a');
@@ -6,9 +7,9 @@ function generateNavListItem(name, icon){
   li.className = "kk"; // and bookmarks spec class here
   li.addEventListener("click", onClick, false);
   a.className = "js-tooltip js-dynamic-tooltip global-bookmark-nav global-dm-nav"; // add a bookmark specific class here
-  s1.className = "Icon Icon--heartBadge Icon--large";
+  s1.className = "Icon Icon--" + icon + " Icon--large";
   s2.className = "text";
-  s2.innerText = "Bookmarks";
+  s2.innerText = name;
   a.appendChild(s1);
   a.appendChild(s2);
   li.appendChild(a);
@@ -16,17 +17,29 @@ function generateNavListItem(name, icon){
 }
 
 function jegehBana(){
-  // clearn anything below, 75% make left, bookmarks there
-  //var container = document.querySelector(".content-main.light-inline-actions");
-  //var div1 = document.createElement('div');
+
+  const globalContainer = document.getElementById("page-container");
+  const container = document.createElement('div');
+  let bookCard = document.createElement('div');
+  container.innerText = "Poopking"
+
+  // style the elements
+  container.style.cssText = 'background: white; padding: 2em;';
+
+  // apply changes
+  globalContainer.innerHTML = container.outerHTML;
+
+
   //div1.className = 'content-header';
   //div1.innerHTML = "<p>Bookmarks</p>";
   //container.
-  var container = document.querySelector(".DMDialog.modal-container");
-  var container_o = document.querySelector(".modal-overlay");
+
+  // hide the DM modal, because we are using DM request to get auth creds
+  var modal = document.querySelector(".DMDialog.modal-container");
+  var modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
-    container.style.display = 'none';
-    container_o.style.display = 'none';
+    modal.style.display = 'none';
+    modal_o.style.display = 'none';
   },500);
 
 }
@@ -40,6 +53,8 @@ function fetchBookmarks(headers) {
     .then(function(e) { console.log(e.json()) })
     .catch(function(err){console.log(err)})
 }
+
+function fetchMoreBookmarks(){}
 
 function sendToExtension() {
   chrome.runtime.sendMessage({funcName: "getAuth"}, function(response) {
@@ -59,8 +74,8 @@ chrome.extension.sendMessage({}, function(response) {
 	if (document.readyState === "complete") {
 		clearInterval(readyStateCheckInterval);
 
-        var navUl = document.querySelector('ul.nav.js-global-actions');
-        var navLi = generateNavListItem("abc","abc");
+        const navUl = document.querySelector('ul.nav.js-global-actions');
+        const navLi = generateNavListItem("Bookmarks","heartBadge");
         navUl.appendChild(navLi);
 
 	}
