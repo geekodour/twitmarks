@@ -20,24 +20,27 @@ function jegehBana(){
 
   const globalContainer = document.getElementById("page-container");
   const container = document.createElement('div');
+  const dashboard = document.createElement('div');
   let bookCard = document.createElement('div');
   container.innerText = "Poopking"
 
   // style the elements
   container.style.cssText = 'background: white; padding: 2em;';
+  container.className = 'content-main top-timeline-tweetbox';
+  dashboard.className = 'dashboard.dashboard-left';
 
   // apply changes
-  globalContainer.innerHTML = container.outerHTML;
+  globalContainer.appendChild(container);
 
 
   //div1.className = 'content-header';
   //div1.innerHTML = "<p>Bookmarks</p>";
-  //container.
 
   // hide the DM modal, because we are using DM request to get auth creds
   var modal = document.querySelector(".DMDialog.modal-container");
   var modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
+    //modal.style.display = 'none';
     modal.style.display = 'none';
     modal_o.style.display = 'none';
   },500);
