@@ -25,6 +25,9 @@ function closeModal(){
 
 function generateBookmarkItem(a){
   const li = document.createElement('li');
+  const d1 = document.createElement('div');
+  li.className = "DMInboxItem"
+  d1.className = "DMInboxItem-avatar"
   li.innerText = "poop";
   return li
 }
