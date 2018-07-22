@@ -30,7 +30,8 @@ function jegehBana(){
   dashboard.className = 'dashboard.dashboard-left';
 
   // apply changes
-  // globalContainer.appendChild(container);
+  // globalContainer.innerHTML = container.outerHTML;
+  // make a modal for the bookmarks
 
 
   //div1.className = 'content-header';
@@ -41,9 +42,7 @@ function jegehBana(){
   const body = document.querySelector("body");
   const modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
-    //modal.style.display = 'none';
     document.elementFromPoint(0, 0).click();
-    //modal_o.style.display = 'none';
   },5);
 
 }
