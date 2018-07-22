@@ -41,10 +41,11 @@ function jegehBana(){
   const body = document.querySelector("body");
   const modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
-    modal.style.display = 'none';
-    body.classList.remove('modal-enabled');
+    //modal.style.display = 'none';
+    document.elementFromPoint(0, 0).click();
+    //body.classList.remove('modal-enabled');
     //modal_o.style.display = 'none';
-  },500);
+  },5);
 
 }
 
