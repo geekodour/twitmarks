@@ -43,7 +43,6 @@ function jegehBana(){
   setTimeout(function(){
     //modal.style.display = 'none';
     document.elementFromPoint(0, 0).click();
-    //body.classList.remove('modal-enabled');
     //modal_o.style.display = 'none';
   },5);
 
