@@ -16,6 +16,17 @@ function generateNavListItem(name, icon){
   return li;
 }
 
+function closeModal(){
+  const bookmarkModal = document.querySelector(".bookmark-modal");
+  const body = document.querySelector("body");
+  bookmarkModal.remove();
+  body.classList.remove('modal-enabled');
+}
+
+function generateBookmarkItem(){
+  const article = document.createElement('article');
+}
+
 function jegehBana(){
 
   const body = document.querySelector("body");
@@ -24,19 +35,43 @@ function jegehBana(){
   const modal_overlay = document.createElement('div'); // delete this modal when works done [imp]
   const modal_container = document.createElement('div');
   const modal = document.createElement('div');
-  const modal_head = document.createElement('div');
 
-  // generate contents
-  modal_head.innerHTML = "<h2>Bookmarks</h2>"
+  const modal_head = document.createElement('div');
+  const modal_content = document.createElement('div');
+
+  const modal_toolbar = document.createElement('div');
+  const close_button = document.createElement('button');
+
+  // generate contents and add behaviours
+  modal_head.innerHTML = "<h2 class='DMActivity-title js-ariaTitle'>Bookmarks</h2>";
+  close_button.innerHTML = '<span class="Icon Icon--close Icon--medium"></span>\
+        <span class="u-hiddenVisually">Close</span>'
+  close_button.addEventListener('click',closeModal, false);
+  modal_content.innerHTML = '<div class="DMActivity-body js-ariaBody">\
+    <div class="DMInbox-content u-scrollY">\
+      <div class="DMInbox-primary">\
+        <ul class="DMInbox-conversations">\
+        </ul>\
+      </div>\
+    </div>\
+  </div>'
+  const bookmarkList = modal_content.querySelector('DMInbox-conversations')
 
   // style the elements
-  modal.className = 'DMDialog modal-container';
-  modal_o.className = 'modal is-autoPosition';
-  modal_oo.className = 'DMActivity DMInbox js-ariaDocument u-chromeOverflowFix DMActivity--open';
+  modal_overlay.className = 'DMDialog modal-container bookmark-modal';
+  modal_container.className = 'modal is-autoPosition';
+  modal.className = 'DMActivity DMInbox js-ariaDocument u-chromeOverflowFix DMActivity--open';
+
+  modal_toolbar.className = 'DMActivity-toolbar'
+  close_button.className = 'DMActivity-close js-close u-textUserColorHover'
+
   modal_head.className = 'DMActivity-header'
+  modal_content.className = 'DMActivity-container'
 
   // apply changes
-  modal.appendChild(modal_head)
+  modal_toolbar.appendChild(close_button);
+  modal_head.appendChild(modal_toolbar);
+  modal.appendChild(modal_head);
   modal_container.appendChild(modal);
   modal_overlay.appendChild(modal_container);
   body.appendChild(modal_overlay);
