@@ -23,8 +23,10 @@ function closeModal(){
   body.classList.remove('modal-enabled');
 }
 
-function generateBookmarkItem(){
-  const article = document.createElement('article');
+function generateBookmarkItem(a){
+  const li = document.createElement('li');
+  li.innerText = "poop";
+  return li
 }
 
 function jegehBana(){
@@ -55,7 +57,11 @@ function jegehBana(){
       </div>\
     </div>\
   </div>'
-  const bookmarkList = modal_content.querySelector('DMInbox-conversations')
+  const bookmarkList = modal_content.querySelector('ul.DMInbox-conversations')
+  bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarkList.appendChild(generateBookmarkItem({}))
 
   // style the elements
   modal_overlay.className = 'DMDialog modal-container bookmark-modal';
@@ -72,6 +78,7 @@ function jegehBana(){
   modal_toolbar.appendChild(close_button);
   modal_head.appendChild(modal_toolbar);
   modal.appendChild(modal_head);
+  modal.appendChild(modal_content);
   modal_container.appendChild(modal);
   modal_overlay.appendChild(modal_container);
   body.appendChild(modal_overlay);
