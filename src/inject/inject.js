@@ -30,19 +30,20 @@ function jegehBana(){
   dashboard.className = 'dashboard.dashboard-left';
 
   // apply changes
-  globalContainer.appendChild(container);
+  // globalContainer.appendChild(container);
 
 
   //div1.className = 'content-header';
   //div1.innerHTML = "<p>Bookmarks</p>";
 
   // hide the DM modal, because we are using DM request to get auth creds
-  var modal = document.querySelector(".DMDialog.modal-container");
-  var modal_o = document.querySelector(".modal-overlay");
+  const modal = document.querySelector(".DMDialog.modal-container");
+  const body = document.querySelector("body");
+  const modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
-    //modal.style.display = 'none';
     modal.style.display = 'none';
-    modal_o.style.display = 'none';
+    body.classList.remove('modal-enabled');
+    //modal_o.style.display = 'none';
   },500);
 
 }
