@@ -18,42 +18,30 @@ function generateNavListItem(name, icon){
 
 function jegehBana(){
 
-  const globalContainer = document.getElementById("page-container");
-
-  // create elements
-  const container = document.createElement('div');
-  const dashboard = document.createElement('div');
-  let bookCard = document.createElement('div');
-  const modal = document.createElement('div');
-  const modal_o = document.createElement('div');
-  const modal_oo = document.createElement('div');
   const body = document.querySelector("body");
 
+  // create elements
+  const modal_overlay = document.createElement('div'); // delete this modal when works done [imp]
+  const modal_container = document.createElement('div');
+  const modal = document.createElement('div');
+  const modal_head = document.createElement('div');
+
   // generate contents
-  container.innerText = "Poopking"
+  modal_head.innerHTML = "<h2>Bookmarks</h2>"
 
   // style the elements
-  //container.style.cssText = 'background: white; padding: 2em;';
-  //container.className = 'content-main top-timeline-tweetbox';
-  //dashboard.className = 'dashboard.dashboard-left';
   modal.className = 'DMDialog modal-container';
   modal_o.className = 'modal is-autoPosition';
-  //modal_oo.className = 'DMActivity DMInbox js-ariaDocument u-chromeOverflowFix DMActivity--open';
-  modal.appendChild(modal_o);
-  body.appendChild(modal);
+  modal_oo.className = 'DMActivity DMInbox js-ariaDocument u-chromeOverflowFix DMActivity--open';
+  modal_head.className = 'DMActivity-header'
 
   // apply changes
-  // globalContainer.innerHTML = container.outerHTML;
-  // make a modal for the bookmarks
-  // delete this modal when works done [imp]
-
-
-  //div1.className = 'content-header';
-  //div1.innerHTML = "<p>Bookmarks</p>";
+  modal.appendChild(modal_head)
+  modal_container.appendChild(modal);
+  modal_overlay.appendChild(modal_container);
+  body.appendChild(modal_overlay);
 
   // hide the DM modal, because we are using DM request to get auth creds
-  //const modal = document.querySelector(".DMDialog.modal-container");
-  //const modal_o = document.querySelector(".modal-overlay");
   setTimeout(function(){
     document.elementFromPoint(0, 0).click();
   },5);
