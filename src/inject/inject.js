@@ -36,10 +36,15 @@ function generateBookmarkItem(tweet){
   const d1 = document.createElement('div');
   const d2 = document.createElement('div');
   const d3 = document.createElement('div');
+  const d4 = document.createElement('div');
+  const dx = document.createElement('div');
+
   li.className = "DMInboxItem"
   d1.className = "DMInboxItem-avatar"
   d2.className = "DMInboxItem-title account-group"
   d3.className = "u-posRelative"
+  d4.className = "DMInboxItem-header"
+  dx.className = "bookmark-links"
 
   // change content
   d1.innerHTML = "<a href='' class='js-action-profile js-user-profile-link'>\
@@ -54,7 +59,8 @@ function generateBookmarkItem(tweet){
   <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>\
   <span class='username u-dir u-textTruncate'>@<b></b></span>";
 
-  d3.innerHTML = "<p class='DMInboxItem-snippet'></p>"
+  d3.innerHTML = "<p class='DMInboxItem-snippet' style='max-height: 100%'></p>"
+  d4.innerHTML = "<a href='#'>Open Tweet</a>"
 
   // apply
   const avatar = d1.querySelector('img');
@@ -68,6 +74,7 @@ function generateBookmarkItem(tweet){
 
   li.appendChild(d1);
   li.appendChild(d2);
+  li.appendChild(d4);
   li.appendChild(d3);
   return li
 }
