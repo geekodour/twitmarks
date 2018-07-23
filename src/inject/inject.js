@@ -29,9 +29,6 @@ function closeModal(){
 }
 
 function generateBookmarkItem(tweet){
-  console.log(tweet.tweet)
-  console.log(tweet.user)
-  console.log("**")
   const li = document.createElement('li');
   const d1 = document.createElement('div');
   const d2 = document.createElement('div');
@@ -60,22 +57,41 @@ function generateBookmarkItem(tweet){
   <span class='username u-dir u-textTruncate'>@<b></b></span>";
 
   d3.innerHTML = "<p class='DMInboxItem-snippet' style='max-height: 100%'></p>"
-  d4.innerHTML = "<a href='#'>Open Tweet</a>"
+  d4.innerHTML = "<a href='#' target='__blank'>Show thread</a>"
+  dx.innerHTML = "<b>Links:</b><br/><ul></ul>"
 
   // apply
   const avatar = d1.querySelector('img');
   const name = d2.querySelector('b');
   const username = d2.querySelector('span b');
   const tweetText = d3.querySelector('p');
+  const linkList = dx.querySelector('ul');
+  const threadAnchor = d4.querySelector('a');
+
   avatar.src = tweet.user.profile_image_url_https;
   name.innerText = tweet.user.name
   username.innerText = tweet.user.screen_name
   tweetText.innerText = tweet.tweet.text;
+  threadAnchor.href = "https://twitter.com/"+tweet.user.screen_name+"/status/"+tweet.tweet.id_str;
 
   li.appendChild(d1);
   li.appendChild(d2);
   li.appendChild(d4);
   li.appendChild(d3);
+
+  // add links if any
+  if(tweet.tweet.entities.urls.length > 0){
+    tweet.tweet.entities.urls.forEach(function(url){
+      let li = document.createElement('li');
+      let a = document.createElement('a');
+      a.href = url.expanded_url;
+      a.innerText = url.display_url;
+      li.appendChild(a);
+      linkList.appendChild(li);
+    });
+    li.appendChild(dx);
+  }
+
   return li
 }
 
