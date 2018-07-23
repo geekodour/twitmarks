@@ -1,7 +1,12 @@
 # twitmarks
 Twitter Bookmarks for the web and desktop.
 
-Very much WIP, but works fine on Chrome, have not tested on Firefox.
+![Twitmarks](./logo.png "Twitmarks logo")
+
+
+
+*Very much WIP, but works fine on Chrome, have not tested on Firefox.*
+
 
 # Demo
 
