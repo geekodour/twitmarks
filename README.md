@@ -1,12 +1,18 @@
 # twitmarks
 Twitter Bookmarks for the web and desktop.
 
-<div style="text-align:center"><img src ="./logo.png" /></div>
+<h1 align="center"> 
+<br>
+<img width="300px;" src="./logo.png">
+</h1>
 
 *Very much WIP, but works fine on Chrome only, will work with Firefox with small tweaks.*
 
 # Demo
-<div style="text-align:center"><img src ="./demo3.gif" /></div>
+<h1 align="center"> 
+<br>
+<img src ="./demo3.gif" />
+</h1>
 
 # Installation
 - Clone this repo
