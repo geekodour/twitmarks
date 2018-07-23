@@ -3,14 +3,17 @@ Twitter Bookmarks for the web and desktop.
 
 ![Twitmarks](./logo.png "Twitmarks logo")
 
-
-
 *Very much WIP, but works fine on Chrome, have not tested on Firefox.*
 
 
 # Demo
+![Twitmarks Demo](./demo3.gif "Twitmarks Demo")
 
 # Installation
+- Clone this repo
+- Switch on Developer Mode in `settings > extensions`
+- Click on `Load unpacked extension`
+- Browse to this directory and select
 
 # Usage
 Just install the addon, visit twitter and you're good to go.

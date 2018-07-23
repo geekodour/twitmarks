@@ -205,7 +205,7 @@ chrome.extension.sendMessage({}, function(response) {
 	if (document.readyState === "complete") {
 		clearInterval(readyStateCheckInterval);
 
-        const navUl = document.querySelector('ul.nav.js-global-actions');
+        const navUl = document.querySelector('ul.nav');
         const navLi = generateNavListItem("Bookmarks","heartBadge");
         navUl.appendChild(navLi);
 
