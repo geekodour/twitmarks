@@ -22,8 +22,7 @@ Just install the addon, visit twitter and you're good to go.
 - Will add to firefox add ons soon.
 
 # Inspiration
-One of the person I lookup to when it comes to product building is @AviAryan,
-and it's about this twitter thread.
+Thanks [@@aviaryan123](https://twitter.com/aviaryan123), Twitter [thread](https://twitter.com/aviaryan123/status/1020295502078914560).
 
 # Contributions
 Feel free to send all sorts of PRs.
