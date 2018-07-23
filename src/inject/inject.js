@@ -1,3 +1,8 @@
+const bookmarks = {
+  modal: {},
+  items: []
+}
+
 // Utility Functions
 function generateNavListItem(name, icon){
   var li = document.createElement('li');
@@ -32,19 +37,15 @@ function generateBookmarkItem(a){
   return li
 }
 
-function jegehBana(){
-
-  const body = document.querySelector("body");
+function generateModal(){
 
   // create elements
-  const modal_overlay = document.createElement('div'); // delete this modal when works done [imp]
+  const modal_overlay = document.createElement('div');
   const modal_container = document.createElement('div');
   const modal = document.createElement('div');
-
   const modal_head = document.createElement('div');
-  const modal_content = document.createElement('div');
-
   const modal_toolbar = document.createElement('div');
+  const modal_content = document.createElement('div');
   const close_button = document.createElement('button');
 
   // generate contents and add behaviours
@@ -59,12 +60,8 @@ function jegehBana(){
         </ul>\
       </div>\
     </div>\
-  </div>'
+  </div>';
   const bookmarkList = modal_content.querySelector('ul.DMInbox-conversations')
-  bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarkList.appendChild(generateBookmarkItem({}))
 
   // style the elements
   modal_overlay.className = 'DMDialog modal-container bookmark-modal';
@@ -84,7 +81,18 @@ function jegehBana(){
   modal.appendChild(modal_content);
   modal_container.appendChild(modal);
   modal_overlay.appendChild(modal_container);
-  body.appendChild(modal_overlay);
+
+  return {bookmarkList, modal_overlay, modal}
+
+}
+
+function jegehBana(){
+
+  const body = document.querySelector("body");
+  bookmarks.modal = generateModal();
+
+
+  body.appendChild(bookmarks.modal.modal_overlay);
 
   // hide the DM modal, because we are using DM request to get auth creds
   setTimeout(function(){
@@ -93,13 +101,26 @@ function jegehBana(){
 
 }
 
+function putBookmarks(list){
+  // stuff
+  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
+  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
+}
+
 function fetchBookmarks(headers) {
   const url = "https://api.twitter.com/2/timeline/bookmark.json";
   const h = new Headers();
   headers.forEach((o)=>{ h.append(o.name, o.value); })
   const request = new Request(url, { headers: h });
   fetch(request,{credentials: "same-origin"})
-    .then(function(e) { console.log(e.json()) })
+    .then(function(e) { 
+      return e.json();
+    })
+    .then(function(e) {
+      putBookmarks({tweets: e.globalObjects.tweets, users: e.globalObjects.users}); 
+    })
     .catch(function(err){console.log(err)})
 }
 
