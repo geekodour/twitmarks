@@ -28,12 +28,47 @@ function closeModal(){
   body.classList.remove('modal-enabled');
 }
 
-function generateBookmarkItem(a){
+function generateBookmarkItem(tweet){
+  console.log(tweet.tweet)
+  console.log(tweet.user)
+  console.log("**")
   const li = document.createElement('li');
   const d1 = document.createElement('div');
+  const d2 = document.createElement('div');
+  const d3 = document.createElement('div');
   li.className = "DMInboxItem"
   d1.className = "DMInboxItem-avatar"
-  li.innerText = "poop";
+  d2.className = "DMInboxItem-title account-group"
+  d3.className = "u-posRelative"
+
+  // change content
+  d1.innerHTML = "<a href='' class='js-action-profile js-user-profile-link'>\
+  <div class='DMAvatar DMAvatar--1 u-chromeOverflowFix'>\
+  <span class='DMAvatar-container'>\
+    <img class='DMAvatar-image'></div>\
+  </span>\
+  </div>\
+  </a>";
+
+  d2.innerHTML = "<b class='fullname'></b>\
+  <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>\
+  <span class='username u-dir u-textTruncate'>@<b></b></span>";
+
+  d3.innerHTML = "<p class='DMInboxItem-snippet'></p>"
+
+  // apply
+  const avatar = d1.querySelector('img');
+  const name = d2.querySelector('b');
+  const username = d2.querySelector('span b');
+  const tweetText = d3.querySelector('p');
+  avatar.src = tweet.user.profile_image_url_https;
+  name.innerText = tweet.user.name
+  username.innerText = tweet.user.screen_name
+  tweetText.innerText = tweet.tweet.text;
+
+  li.appendChild(d1);
+  li.appendChild(d2);
+  li.appendChild(d3);
   return li
 }
 
@@ -88,25 +123,27 @@ function generateModal(){
 
 function jegehBana(){
 
+  // hide the DM modal, because we are using DM request to get auth creds
+  setTimeout(function(){
+    document.elementFromPoint(0, 0).click();
+  },5);
+
   const body = document.querySelector("body");
   bookmarks.modal = generateModal();
 
 
   body.appendChild(bookmarks.modal.modal_overlay);
 
-  // hide the DM modal, because we are using DM request to get auth creds
-  setTimeout(function(){
-    document.elementFromPoint(0, 0).click();
-  },5);
 
 }
 
 function putBookmarks(list){
   // stuff
-  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
-  bookmarks.modal.bookmarkList.appendChild(generateBookmarkItem({}))
+  list.tweets.forEach(function(tweet){
+    bookmarks.modal.bookmarkList.appendChild(
+      generateBookmarkItem({tweet: tweet, user: list.users[tweet.user_id_str] })
+    )
+  })
 }
 
 function fetchBookmarks(headers) {
@@ -119,7 +156,8 @@ function fetchBookmarks(headers) {
       return e.json();
     })
     .then(function(e) {
-      putBookmarks({tweets: e.globalObjects.tweets, users: e.globalObjects.users}); 
+      let tweets = Object.values(e.globalObjects.tweets)
+      putBookmarks({tweets: tweets, users: e.globalObjects.users}); 
     })
     .catch(function(err){console.log(err)})
 }
