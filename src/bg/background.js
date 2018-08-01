@@ -1,3 +1,9 @@
+window.browser = (function () {
+  return window.msBrowser ||
+    window.browser ||
+    window.chrome;
+})();
+
 // TODO: remove Cookie header
 const requiredHeaders = [
   {
@@ -19,17 +25,17 @@ const requiredHeaders = [
 
 // Listener
 
-chrome.extension.onMessage.addListener(
+browser.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
 
     // color the browser icon
-    chrome.pageAction.show(sender.tab.id);
+    browser.pageAction.show(sender.tab.id);
 
     if(request.funcName === "getAuth"){
       // run the following only when bookmark is clicked
       const reqH = requiredHeaders.map((h)=>h.name);
 
-      chrome.webRequest.onBeforeSendHeaders.addListener(
+      browser.webRequest.onBeforeSendHeaders.addListener(
 
         function getAllHeaders(details) {
 
@@ -45,7 +51,7 @@ chrome.extension.onMessage.addListener(
           // check if we got all required headers,
           // if positive, remove listener and send response
           if( requiredHeaders.every((a)=>a.found == true) ){
-            chrome.webRequest.onBeforeSendHeaders.removeListener(getAllHeaders);
+            browser.webRequest.onBeforeSendHeaders.removeListener(getAllHeaders);
             sendResponse({ headers: requiredHeaders.map(h=>h.stuff) });
           }
 
