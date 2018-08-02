@@ -50,7 +50,7 @@ class BookmarksDOM {
     this.placeNavButton();
   }
 
-  generateNavListItem(name: string, icon: string) : HTMLElement{
+  generateNavListItem(name: string, icon: string) : void{
     const li: HTMLElement = document.createElement('li');
     const a: HTMLElement = document.createElement('a');
     const spans: HTMLElement[] = [0,1].map((s)=>document.createElement('span'))
@@ -65,10 +65,10 @@ class BookmarksDOM {
     li.addEventListener('click', this.bookmarksCTA, false)
     a.appendChild(spans[0])
     a.appendChild(spans[1])
-    li.appendChild(a);
+    li.appendChild(a)
   
     const navUl: HTMLElement = document.querySelector('ul.nav');
-    navUl.appendChild(li);
+    navUl.appendChild(li)
   }
 
   // configure modal to show bookmarks
@@ -92,6 +92,12 @@ class BookmarksDOM {
 
   placeNavButton(){ 
     this.generateNavListItem('Bookmarks','heartBadge');
+  }
+
+  watchHeaders(){
+    //browser.runtime.sendMessage({funcName: 'getAuth'}, function(response) {
+    //  fetchBookmarks(response.headers);
+    //})
   }
 }
 
