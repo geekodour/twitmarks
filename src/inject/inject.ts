@@ -28,11 +28,11 @@ class BookmarksData {
     fetch(request,{credentials: 'same-origin'})
       .then((e) => { return e.json() })
       .then((e) => {
+        let tweets = e.globalObjects.tweets;
         this.nextCursor = e.timeline.instructions["0"]
                                 .addEntries.entries[bookmarks.limit+1]
                                 .content.operation.cursor.value;
-        this.items = Object.keys(e.globalObjects.tweets)
-                           .map((k)=>e.globalObjects.tweets[k]);
+        this.items = Object.keys(tweets).map((k)=>tweets[k]);
         // return these
         //putBookmarks({tweets: this.items, users: e.globalObjects.users}); 
       })
@@ -67,7 +67,8 @@ class BookmarksDOM {
     a.appendChild(spans[1])
     li.appendChild(a);
   
-    return li;
+    const navUl: HTMLElement = document.querySelector('ul.nav');
+    navUl.appendChild(li);
   }
 
   // configure modal to show bookmarks
@@ -75,7 +76,7 @@ class BookmarksDOM {
 
     // hide dm modal
     setTimeout(function(){
-      document.elementFromPoint(0, 1).click();
+      //document.elementFromPoint(0, 1).click();
     },1);
 
     // put the generated modal into the body
@@ -90,9 +91,7 @@ class BookmarksDOM {
   }
 
   placeNavButton(){ 
-    const navUl: HTMLElement = document.querySelector('ul.nav');
-    const navLi = this.generateNavListItem('Bookmarks','heartBadge');
-    navUl.appendChild(navLi);
+    this.generateNavListItem('Bookmarks','heartBadge');
   }
 }
 
