@@ -19,7 +19,7 @@ function generateNavListItem(name, icon){
   a.className = 'js-tooltip js-dynamic-tooltip global-bookmark-nav global-dm-nav'
   spans[0].className = `Icon Icon--${icon} Icon--large`
   spans[1].className = 'text'
-  spans[2].innerText = name
+  spans[1].innerText = name
 
   li.addEventListener('click', bookmarksCTA, false)
 
@@ -147,18 +147,17 @@ function generateModal(){
 
 
 function fetchBookmarks(headers) {
-  const url = "https://api.twitter.com/2/timeline/bookmark.json?count="+bookmarks.limit;
-  const h = new Headers();
-  headers.forEach((o)=>{ h.append(o.name, o.value); })
-  const request = new Request(url, { headers: h });
-  fetch(request,{credentials: "same-origin"})
-    .then(function(e) { 
-      return e.json();
-    })
-    .then(function(e) {
-      bookmarks.nextCursor = e.timeline.instructions["0"]
-                              .addEntries.entries[bookmarks.limit+1]
-                              .content.operation.cursor.value;
+  const url = `https://api.twitter.com/2/timeline/bookmark.json?count=${bookmarks.limit}`
+  const h = new Headers()
+  headers.forEach((o)=>{ h.append(o.name, o.value) })
+  const request = new Request(url, { headers: h })
+
+  fetch(request,{credentials: 'same-origin'})
+    .then((e) => { return e.json() })
+    .then((e) => {
+      //bookmarks.nextCursor = e.timeline.instructions["0"]
+      //                        .addEntries.entries[bookmarks.limit+1]
+      //                        .content.operation.cursor.value;
       let tweets = Object.values(e.globalObjects.tweets)
       putBookmarks({tweets: tweets, users: e.globalObjects.users}); 
     })
@@ -176,10 +175,11 @@ function putBookmarks(list){
 
 // configure modal to show bookmarks
 function configureModal(){
-  // hide DM modal right after it is opened
+
+  // hide dm modal
   setTimeout(function(){
-    document.elementFromPoint(0, 0).click();
-  },5);
+    document.elementFromPoint(0, 1).click();
+  },1);
 
   // put the generated modal into the body
   const body = document.querySelector("body");
@@ -211,3 +211,6 @@ browser.runtime.sendMessage({}, function(response) {
 	}
 	}, 10)
 })
+//const navUl = document.querySelector('ul.nav');
+//const navLi = generateNavListItem('Bookmarks','heartBadge')
+//navUl.appendChild(navLi)
