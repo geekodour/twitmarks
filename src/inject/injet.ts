@@ -31,13 +31,15 @@ class BookmarksData {
         this.nextCursor = e.timeline.instructions["0"]
                                 .addEntries.entries[bookmarks.limit+1]
                                 .content.operation.cursor.value;
-        let tweets = Object.values(e.globalObjects.tweets)
-        putBookmarks({tweets: tweets, users: e.globalObjects.users}); 
+        this.items = Object.keys(e.globalObjects.tweets)
+                           .map((k)=>e.globalObjects.tweets[k]);
+        // return these
+        //putBookmarks({tweets: this.items, users: e.globalObjects.users}); 
       })
       .catch(function(err){console.log(err)})
   }
 
-  bookmarkTweet(tweetid: string){
+  bookmarkaTweet(tweetid: string){
 
   }
 }
