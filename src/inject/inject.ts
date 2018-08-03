@@ -1,3 +1,7 @@
+window.browser = (function () {
+  return window.msBrowser || window.browser || window.chrome;
+})()
+
 class BookmarksData {
   modal: object;
   items: object[];
@@ -77,7 +81,7 @@ class BookmarksDOM {
     // hide dm modal
     setTimeout(function(){
       //document.elementFromPoint(0, 1).click();
-    },1);
+    },5);
 
     // put the generated modal into the body
     const body = document.querySelector("body");
@@ -95,9 +99,10 @@ class BookmarksDOM {
   }
 
   watchHeaders(){
-    //browser.runtime.sendMessage({funcName: 'getAuth'}, function(response) {
-    //  fetchBookmarks(response.headers);
-    //})
+    // get auth details, remove dm class the second time(after getting all header) from out modal.
+    browser.runtime.sendMessage({funcName: 'getAuth'}, function(response) {
+      fetchBookmarks(response.headers);
+    })
   }
 }
 
