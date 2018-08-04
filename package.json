@@ -1,0 +1,25 @@
+{
+  "name": "twitmarks",
+  "version": "1.0.0",
+  "description": "Browser extension for twitter to add bookmarks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geekodour/twitmarks.git"
+  },
+  "keywords": [
+    "Twitter"
+  ],
+  "author": "Hrishikesh Barman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geekodour/twitmarks/issues"
+  },
+  "homepage": "https://github.com/geekodour/twitmarks#readme",
+  "dependencies": {
+    "@types/chrome": "0.0.71"
+  }
+}
