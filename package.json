@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc ./src/inject/inject.ts"
+    "build": "tsc ./src/inject/inject.ts ./src/bg/background.ts"
   },
   "repository": {
     "type": "git",
