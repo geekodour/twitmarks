@@ -25,6 +25,7 @@ var requiredHeaders = [
 window.browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
+
     if (request.funcName === "getAuth") {
         // run the following only when bookmark is clicked
         var headerNames_1 = requiredHeaders.map(function (h) { return h.name; });
