@@ -81,7 +81,7 @@ class BookmarksDOM {
   constructor(){
     this.bd = new BookmarksData();
     this.placeNavButton();
-    setTimeout(()=>{ this.watchHeaders() },5);
+    this.watchHeaders();
   }
 
   generateNavListItem(name: string, icon: string) : void{
@@ -167,7 +167,6 @@ class BookmarksDOM {
   }
 
   configureModal(){
-
     setTimeout(function(){
       let somePoint : HTMLElement = document.elementFromPoint(0, 1) as HTMLElement;
       somePoint.click(); // hide dm modal
@@ -184,15 +183,12 @@ class BookmarksDOM {
   }
 
   watchHeaders(){
-    // get auth details, remove dm class the second time(after getting all header) from out modal.
-
-    window.browser.runtime.sendMessage({funcName: 'getAuth'}, function(response: any) {
-      console.log(response.headers);
+    window.browser.runtime.sendMessage({funcName: 'getAuth'}, (response: any) => {
       this.bd.setHeaders(response.headers); 
-      this.bd.fetchBookmarks(response.headers);
+      this.bd.fetchBookmarks();
     })
-
   }
+
 }
 
 const ext = new BookmarksDOM();

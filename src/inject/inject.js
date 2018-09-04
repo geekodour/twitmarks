@@ -51,10 +51,9 @@ var BookmarksData = /** @class */ (function () {
 }());
 var BookmarksDOM = /** @class */ (function () {
     function BookmarksDOM() {
-        var _this = this;
         this.bd = new BookmarksData();
         this.placeNavButton();
-        setTimeout(function () { _this.watchHeaders(); }, 5);
+        this.watchHeaders();
     }
     BookmarksDOM.prototype.generateNavListItem = function (name, icon) {
         var _this = this;
@@ -134,11 +133,10 @@ var BookmarksDOM = /** @class */ (function () {
         this.generateNavListItem('Bookmarks', 'heartBadge');
     };
     BookmarksDOM.prototype.watchHeaders = function () {
-        // get auth details, remove dm class the second time(after getting all header) from out modal.
+        var _this = this;
         window.browser.runtime.sendMessage({ funcName: 'getAuth' }, function (response) {
-            console.log(response.headers);
-            this.bd.setHeaders(response.headers);
-            this.bd.fetchBookmarks(response.headers);
+            _this.bd.setHeaders(response.headers);
+            _this.bd.fetchBookmarks();
         });
     };
     return BookmarksDOM;
