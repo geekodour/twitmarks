@@ -1,3 +1,8 @@
+//interface Window {
+//  browser?: any;
+//  msBrowser?: any;
+//}
+
 window.browser = (function () {
   return window.msBrowser || window.browser || window.chrome;
 })()
