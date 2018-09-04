@@ -2,14 +2,15 @@ window.browser = (function () {
     return window.msBrowser || window.browser || window.chrome;
 })();
 var BookmarksData = /** @class */ (function () {
-    function BookmarksData() {
+    function BookmarksData(headers) {
         this.modal = {};
         this.tweets = [];
         this.nextCursor = null;
         this.limit = 20;
+        this.headers = headers;
         this.apiUrl = 'https://api.twitter.com/2/timeline/bookmark.json';
     }
-    BookmarksData.prototype.fetchBookmarks = function (headers) {
+    BookmarksData.prototype.fetchBookmarks = function () {
         // check if last page is reached
         // hide load more button if last is reached
         var params = [
@@ -18,13 +19,15 @@ var BookmarksData = /** @class */ (function () {
         ].join('&');
         var url = this.apiUrl + "?" + params;
         var h = new Headers();
-        headers.forEach(function (o) { h.append(o.name, o.value); });
+        console.log(this.headers);
+        this.headers.forEach(function (o) { h.append(o.name, o.value); });
         var request = new Request(url, { headers: h });
         fetch(request, { credentials: 'same-origin' })
             .then(function (e) { return e.json(); })
             .then(function (e) {
-            var tweets = e.globalObjects.tweets;
-            console.log(tweets);
+            console.log(e);
+            //let tweets = e.globalObjects.tweets;
+            //console.log(tweets)
             //this.nextCursor = e.timeline.instructions["0"]
             //                        .addEntries.entries[this.limit+1]
             //                        .content.operation.cursor.value;
@@ -38,8 +41,8 @@ var BookmarksData = /** @class */ (function () {
     return BookmarksData;
 }());
 var BookmarksDOM = /** @class */ (function () {
+    //headers: object[];
     function BookmarksDOM() {
-        this.bd = new BookmarksData();
         this.watchHeaders();
         //this.placeNavButton();
     }
@@ -81,10 +84,10 @@ var BookmarksDOM = /** @class */ (function () {
     BookmarksDOM.prototype.watchHeaders = function () {
         // get auth details, remove dm class the second time(after getting all header) from out modal.
         window.browser.runtime.sendMessage({ funcName: 'getAuth' }, function (response) {
-            console.log("* in inject.ts *");
-            console.log(response.headers);
-            console.log("* end inject.ts *");
-            //this.bd.fetchBookmarks(response.headers);
+            //this.headers = response.headers;
+            this.bd = new BookmarksData(response.headers);
+            this.bd.fetchBookmarks(response.headers);
+            //console.log(this.bd)
         });
     };
     return BookmarksDOM;

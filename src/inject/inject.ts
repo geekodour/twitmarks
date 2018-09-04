@@ -13,16 +13,18 @@ class BookmarksData {
   nextCursor: string;
   limit: number;
   apiUrl: string;
+  headers: {name: string, value: string}[];
 
-  constructor(){
+  constructor(headers: {name: string, value: string}[]){
     this.modal = {};
     this.tweets = [];
     this.nextCursor = null;
     this.limit = 20;
+    this.headers = headers;
     this.apiUrl = 'https://api.twitter.com/2/timeline/bookmark.json';
   }
 
-  fetchBookmarks(headers: {name: string, value: string}[]){ 
+  fetchBookmarks(){ 
     // check if last page is reached
     // hide load more button if last is reached
 
@@ -33,14 +35,16 @@ class BookmarksData {
 
     const url: string = `${this.apiUrl}?${params}`
     const h: Headers = new Headers()
-    headers.forEach((o)=>{ h.append(o.name, o.value) })
+    console.log(this.headers)
+    this.headers.forEach((o)=>{ h.append(o.name, o.value) })
     const request: Request = new Request(url, { headers: h })
 
     fetch(request,{credentials: 'same-origin'})
       .then((e) => { return e.json() })
       .then((e) => {
-        let tweets = e.globalObjects.tweets;
-        console.log(tweets)
+        console.log(e)
+        //let tweets = e.globalObjects.tweets;
+        //console.log(tweets)
         //this.nextCursor = e.timeline.instructions["0"]
         //                        .addEntries.entries[this.limit+1]
         //                        .content.operation.cursor.value;
@@ -59,10 +63,9 @@ class BookmarksData {
 class BookmarksDOM {
 
   bd: BookmarksData;
-  headers: object[];
+  //headers: object[];
 
   constructor(){
-    this.bd = new BookmarksData();
     this.watchHeaders();
     //this.placeNavButton();
   }
@@ -115,8 +118,10 @@ class BookmarksDOM {
     // get auth details, remove dm class the second time(after getting all header) from out modal.
 
     window.browser.runtime.sendMessage({funcName: 'getAuth'}, function(response) {
-      this.headers = response.headers;
-      this.bd.fetchBookmarks(this.headers);
+      //this.headers = response.headers;
+      this.bd = new BookmarksData(response.headers);
+      this.bd.fetchBookmarks(response.headers);
+      //console.log(this.bd)
     })
 
   }

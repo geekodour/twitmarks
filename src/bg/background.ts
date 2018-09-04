@@ -24,7 +24,6 @@ const requiredHeaders = [
 ]
 
 // Listener
-
 window.browser.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
 
@@ -41,18 +40,14 @@ window.browser.runtime.onMessage.addListener(
 
           // check all available headers for required headers
           for (var i = 0; i < details.requestHeaders.length; ++i) {
-            console.log(details.requestHeaders[i])
-
             if( headerNames.indexOf(details.requestHeaders[i].name) > -1 ){
               let pos = headerNames.indexOf(details.requestHeaders[i].name);
               requiredHeaders[pos].found = true;
               requiredHeaders[pos].header = details.requestHeaders[i];
             }
-
           }
 
-          // check if we got all required headers,
-          // if positive, remove listener and send response
+          // remove listener and send response if found all required headers
           if( requiredHeaders.every((a)=>a.found == true) ){
             window.browser.webRequest.onBeforeSendHeaders.removeListener(getAllHeaders);
             sendResponse({ headers: requiredHeaders.map(h=>h.header) });
@@ -66,5 +61,4 @@ window.browser.runtime.onMessage.addListener(
       return true;
     }
 
-    
   });
