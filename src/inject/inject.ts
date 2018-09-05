@@ -221,6 +221,8 @@ class BookmarksDOM {
     const threadAnchor = divs[3].querySelector('a');
   
     // apply
+    console.log(tweet)
+    let tweetFullText = tweet.tweet.full_text;
     avatar.src = tweet.user.profile_image_url_https;
     name.innerText = tweet.user.name
     username.innerText = tweet.user.screen_name
@@ -233,6 +235,37 @@ class BookmarksDOM {
     li.appendChild(divs[3])
     li.appendChild(divs[2])
   
+    // add links if any
+    const entities = Object.keys(tweet.tweet.entities).map((k)=>k)
+    entities.forEach((entityName)=>{
+      tweet.tweet.entities[entityName].forEach((e: any)=>{
+
+        if(entityName === "urls"){
+          const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+            <a href="${e.expanded_url}">${extractedText}</a>
+          `);
+        }
+
+        if(entityName === "media"){
+          const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+            <img src="${e.media_url_https}" style="width:50%;display:block;"></img>
+          `);
+        }
+
+        if(entityName === "user_mentions"){
+          const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+            <a href="https://twitter.com/${e.screen_name}">${extractedText}</a>
+          `);
+        }
+
+        // TODO: Hashtags and Symbols
+
+      })
+    })
+
     return li
   }
 

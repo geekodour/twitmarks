@@ -167,6 +167,8 @@ class BookmarksDOM {
         const linkList = divs[4].querySelector('ul');
         const threadAnchor = divs[3].querySelector('a');
         // apply
+        console.log(tweet);
+        let tweetFullText = tweet.tweet.full_text;
         avatar.src = tweet.user.profile_image_url_https;
         name.innerText = tweet.user.name;
         username.innerText = tweet.user.screen_name;
@@ -178,17 +180,34 @@ class BookmarksDOM {
         li.appendChild(divs[3]);
         li.appendChild(divs[2]);
         // add links if any
-        //// if(tweet.tweet.entities.urls.length > 0){
-        ////   tweet.tweet.entities.urls.forEach(function(url: any){
-        ////     let li = document.createElement('li')
-        ////     let a = document.createElement('a')
-        ////     a.href = url.expanded_url
-        ////     a.innerText = url.display_url
-        ////     li.appendChild(a)
-        ////     linkList.appendChild(li)
-        ////   })
-        ////   li.appendChild(divs[4])
-        //// }
+        const entities = Object.keys(tweet.tweet.entities).map((k) => k);
+        console.log(entities);
+        /**
+         * hashtags" "symbols" "user_mentions" "urls" "media"
+         */
+        entities.forEach((entityName) => {
+            tweet.tweet.entities[entityName].forEach((e) => {
+                if (entityName === "urls") {
+                    const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+                    tweetText.innerHTML = tweetText.innerHTML.replace(extractedText, `
+            <a href="${e.expanded_url}">${extractedText}</a>
+          `);
+                }
+                if (entityName === "media") {
+                    const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+                    tweetText.innerHTML = tweetText.innerHTML.replace(extractedText, `
+            <img src="${e.media_url_https}" style="width:50%;display:block;"></img>
+          `);
+                }
+                if (entityName === "user_mentions") {
+                    const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
+                    tweetText.innerHTML = tweetText.innerHTML.replace(extractedText, `
+            <a href="https://twitter.com/${e.screen_name}">${extractedText}</a>
+          `);
+                }
+            });
+        });
+        //tweetText.innerHTML = tweetFullText;
         return li;
     }
     configureModal() {
