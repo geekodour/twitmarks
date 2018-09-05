@@ -25,7 +25,7 @@ const requiredHeaders = [
 
 // Listener
 window.browser.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+  function(request: any, sender: any, sendResponse: any) {
 
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
@@ -36,7 +36,7 @@ window.browser.runtime.onMessage.addListener(
 
       window.browser.webRequest.onBeforeSendHeaders.addListener(
 
-        function getAllHeaders(details) {
+        function getAllHeaders(details: any) {
 
           // check all available headers for required headers
           for (var i = 0; i < details.requestHeaders.length; ++i) {

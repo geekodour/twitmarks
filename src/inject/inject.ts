@@ -7,13 +7,15 @@ window.browser = (function () {
   return window.msBrowser || window.browser || window.chrome;
 })()
 
+
 class BookmarksData {
   modal: {
     bookmarkList: Element,
     modal_overlay: HTMLDivElement,
     modal: HTMLDivElement
   };
-  tweets: object[];
+  tweets: {[key: string]: any}[];
+  users: {[key: string]: any};
   nextCursor: string;
   limit: number;
   apiUrl: string;
@@ -22,6 +24,7 @@ class BookmarksData {
   constructor(){
     //this.modal = { };
     this.tweets = [];
+    this.users = {}
     this.nextCursor = null;
     this.limit = 20;
     this.apiUrl = 'https://api.twitter.com/2/timeline/bookmark.json';
@@ -54,22 +57,25 @@ class BookmarksData {
     this.headers.forEach((o)=>{ h.append(o.name, o.value) })
     const request: Request = new Request(url, { headers: h })
 
-    fetch(request,{credentials: 'same-origin'})
+    return fetch(request,{credentials: 'same-origin'})
       .then((e) => { return e.json() })
       .then((e) => {
         let tweets = e.globalObjects.tweets;
         this.nextCursor = e.timeline.instructions["0"]
                                 .addEntries.entries[this.limit+1]
                                 .content.operation.cursor.value;
-        this.tweets = Object.keys(tweets).map((k)=>tweets[k]);
-        console.log({tweets: this.tweets, users: e.globalObjects.users}); 
-        // return these
-        // putBookmarks({tweets: this.items, users: e.globalObjects.users}); 
+
+        this.tweets = [...this.tweets, ...Object.keys(tweets).map((k)=>tweets[k])];
+        this.users = {...this.users, ...e.globalObjects.users};
       })
       .catch(function(err){console.log(err)})
   }
 
-  bookmarkaTweet(tweetid: string){ 
+  bookmarkATweet(tweetid: string){ 
+
+  }
+
+  unBookmarkATweet(tweetid: string){ 
 
   }
 }
@@ -77,9 +83,11 @@ class BookmarksData {
 class BookmarksDOM {
 
   bd: BookmarksData;
+  dataRecieved: Promise<any>;
 
   constructor(){
     this.bd = new BookmarksData();
+    this.dataRecieved = new Promise((resolve,reject)=>{});
     this.placeNavButton();
     this.watchHeaders();
   }
@@ -96,7 +104,10 @@ class BookmarksDOM {
     spans[1].innerText = name
   
     // apply changes
-    li.addEventListener('click', ()=>{this.configureModal();}, false)
+    li.addEventListener('click', ()=>{
+      this.configureModal(); 
+      this.displayBookmarks();
+    }, false)
     a.appendChild(spans[0])
     a.appendChild(spans[1])
     li.appendChild(a)
@@ -161,21 +172,84 @@ class BookmarksDOM {
     return {bookmarkList, modal_overlay, modal}
   }
 
-  popModal(){
-    this.configureModal();
-    //displayBookmakrs()
+  displayBookmarks(){
+    this.dataRecieved.then((e)=>{
+      let tweets = this.bd.tweets;
+      let users = this.bd.users;
+      this.putBookmarks(tweets, users); 
+    })
+  }
+
+  putBookmarks(tweets: {[key: string]: any}[], users: {[key: string]: any}){
+    tweets.forEach((tweet)=>{
+      this.bd.modal.bookmarkList.appendChild(
+        this.generateBookmarkItem({tweet: tweet, user: users[tweet.user_id_str] })
+      )
+    })
+  }
+
+  generateBookmarkItem(tweet: {tweet: any, user: any}){
+    const li = document.createElement('li')
+    const divs = [0,1,2,3,4].map((d)=>document.createElement('div'))
+  
+    li.className = 'DMInboxItem'
+    divs[0].className = 'DMInboxItem-avatar'
+    divs[1].className = 'DMInboxItem-title account-group'
+    divs[2].className = 'u-posRelative'
+    divs[3].className = 'DMInboxItem-header'
+    divs[4].className = 'bookmark-links'
+  
+    // change content
+    divs[0].innerHTML = `<a href='' class='js-action-profile js-user-profile-link'>
+    <div class='DMAvatar DMAvatar--1 u-chromeOverflowFix'>
+    <span class='DMAvatar-container'> <img class='DMAvatar-image'></div> </span>
+    </div>
+    </a>`
+    divs[1].innerHTML = `<b class='fullname'></b>
+    <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>
+    <span class='username u-dir u-textTruncate'>@<b></b></span>`
+    divs[2].innerHTML = `<p class='DMInboxItem-snippet' style='max-height: 100%'></p>`
+    divs[3].innerHTML = `<a href='#' target='__blank'>Show thread</a>`
+    divs[4].innerHTML = `<b>Links:</b><br/><ul></ul>`
+  
+    // assign
+    const avatar = divs[0].querySelector('img');
+    const name = divs[1].querySelector('b');
+    const username = divs[1].querySelector('span b') as HTMLElement;
+    const tweetText = divs[2].querySelector('p');
+    const linkList = divs[4].querySelector('ul');
+    const threadAnchor = divs[3].querySelector('a');
+  
+    // apply
+    avatar.src = tweet.user.profile_image_url_https;
+    name.innerText = tweet.user.name
+    username.innerText = tweet.user.screen_name
+    tweetText.innerText = tweet.tweet.full_text;
+    threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`
+  
+    // append
+    li.appendChild(divs[0])
+    li.appendChild(divs[1])
+    li.appendChild(divs[3])
+    li.appendChild(divs[2])
+  
+    return li
   }
 
   configureModal(){
+
     setTimeout(function(){
       let somePoint : HTMLElement = document.elementFromPoint(0, 1) as HTMLElement;
       somePoint.click(); // hide dm modal
     },5);
 
-    // put the generated modal into the body
-    const body = document.querySelector("body");
-    this.bd.modal = this.generateModal();
-    body.appendChild(this.bd.modal.modal_overlay);
+    this.dataRecieved.then((e)=>{
+      // put the generated modal into the body
+      const body = document.querySelector("body");
+      this.bd.modal = this.generateModal();
+      body.appendChild(this.bd.modal.modal_overlay);
+    })
+
   }
 
   placeNavButton(){ 
@@ -185,7 +259,10 @@ class BookmarksDOM {
   watchHeaders(){
     window.browser.runtime.sendMessage({funcName: 'getAuth'}, (response: any) => {
       this.bd.setHeaders(response.headers); 
-      this.bd.fetchBookmarks();
+      this.bd.fetchBookmarks()
+          .then((e)=>{
+            this.dataRecieved = Promise.resolve();
+          })
     })
   }
 

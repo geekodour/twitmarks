@@ -1,103 +1,114 @@
 window.browser = (function () {
     return window.msBrowser || window.browser || window.chrome;
 })();
-var BookmarksData = /** @class */ (function () {
-    function BookmarksData() {
+class BookmarksData {
+    constructor() {
         //this.modal = { };
         this.tweets = [];
+        this.users = {};
         this.nextCursor = null;
         this.limit = 20;
         this.apiUrl = 'https://api.twitter.com/2/timeline/bookmark.json';
     }
-    BookmarksData.prototype.setHeaders = function (headers) {
+    setHeaders(headers) {
         this.headers = headers;
-    };
-    BookmarksData.prototype.fetchBookmarks = function () {
+    }
+    fetchBookmarks() {
         // check if last page is reached
         // hide load more button if last is reached
-        var _this = this;
-        var params = [
-            "count=" + this.limit,
-            "include_profile_interstitial_type=1",
-            "include_reply_count=1",
-            "tweet_mode=extended",
-            "include_can_dm=1",
-            "include_can_media_tag=1",
-            "cards_platform=Web-12"
+        let params = [
+            `count=${this.limit}`,
+            `include_profile_interstitial_type=1`,
+            `include_reply_count=1`,
+            `tweet_mode=extended`,
+            `include_can_dm=1`,
+            `include_can_media_tag=1`,
+            `cards_platform=Web-12`
         ].join('&');
         if (this.nextCursor) {
-            params += "&cursor=" + this.nextCursor;
+            params += `&cursor=${this.nextCursor}`;
         }
-        var url = this.apiUrl + "?" + params;
-        var h = new Headers();
-        this.headers.forEach(function (o) { h.append(o.name, o.value); });
-        var request = new Request(url, { headers: h });
-        fetch(request, { credentials: 'same-origin' })
-            .then(function (e) { return e.json(); })
-            .then(function (e) {
-            var tweets = e.globalObjects.tweets;
-            _this.nextCursor = e.timeline.instructions["0"]
-                .addEntries.entries[_this.limit + 1]
+        const url = `${this.apiUrl}?${params}`;
+        const h = new Headers();
+        this.headers.forEach((o) => { h.append(o.name, o.value); });
+        const request = new Request(url, { headers: h });
+        return fetch(request, { credentials: 'same-origin' })
+            .then((e) => { return e.json(); })
+            .then((e) => {
+            let tweets = e.globalObjects.tweets;
+            this.nextCursor = e.timeline.instructions["0"]
+                .addEntries.entries[this.limit + 1]
                 .content.operation.cursor.value;
-            _this.tweets = Object.keys(tweets).map(function (k) { return tweets[k]; });
-            console.log({ tweets: _this.tweets, users: e.globalObjects.users });
-            // return these
-            // putBookmarks({tweets: this.items, users: e.globalObjects.users}); 
-        })["catch"](function (err) { console.log(err); });
-    };
-    BookmarksData.prototype.bookmarkaTweet = function (tweetid) {
-    };
-    return BookmarksData;
-}());
-var BookmarksDOM = /** @class */ (function () {
-    function BookmarksDOM() {
+            this.tweets = [...this.tweets, ...Object.keys(tweets).map((k) => tweets[k])];
+            this.users = Object.assign({}, this.users, e.globalObjects.users);
+        })
+            .catch(function (err) { console.log(err); });
+    }
+    bookmarkATweet(tweetid) {
+    }
+    unBookmarkATweet(tweetid) {
+    }
+}
+class BookmarksDOM {
+    constructor() {
         this.bd = new BookmarksData();
+        this.dataRecieved = new Promise((resolve, reject) => { });
         this.placeNavButton();
         this.watchHeaders();
     }
-    BookmarksDOM.prototype.generateNavListItem = function (name, icon) {
-        var _this = this;
-        var li = document.createElement('li');
-        var a = document.createElement('a');
-        var spans = [0, 1].map(function (s) { return document.createElement('span'); });
+    generateNavListItem(name, icon) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        const spans = [0, 1].map((s) => document.createElement('span'));
         // add classnames
         a.className = 'js-tooltip js-dynamic-tooltip global-bookmark-nav global-dm-nav';
-        spans[0].className = "Icon Icon--" + icon + " Icon--large";
+        spans[0].className = `Icon Icon--${icon} Icon--large`;
         spans[1].className = 'text';
         spans[1].innerText = name;
         // apply changes
-        li.addEventListener('click', function () { _this.configureModal(); }, false);
+        li.addEventListener('click', () => {
+            this.configureModal();
+            this.displayBookmarks();
+        }, false);
         a.appendChild(spans[0]);
         a.appendChild(spans[1]);
         li.appendChild(a);
-        var navUl = document.querySelector('ul.nav');
+        const navUl = document.querySelector('ul.nav');
         navUl.appendChild(li);
-    };
-    BookmarksDOM.prototype.closeModal = function () {
-        var navButton = document.querySelector(".global-bookmark-nav.global-dm-nav");
+    }
+    closeModal() {
+        const navButton = document.querySelector(`.global-bookmark-nav.global-dm-nav`);
         if (navButton) {
             navButton.classList.remove('global-dm-nav');
         }
-        var bookmarkModal = document.querySelector('.bookmark-modal');
-        var body = document.querySelector("body");
+        const bookmarkModal = document.querySelector('.bookmark-modal');
+        const body = document.querySelector("body");
         bookmarkModal.remove();
         body.classList.remove('modal-enabled');
-    };
-    BookmarksDOM.prototype.generateModal = function () {
+    }
+    generateModal() {
         // create elements
-        var modal_overlay = document.createElement('div');
-        var modal_container = document.createElement('div');
-        var modal = document.createElement('div');
-        var modal_head = document.createElement('div');
-        var modal_toolbar = document.createElement('div');
-        var modal_content = document.createElement('div');
-        var close_button = document.createElement('button');
+        const modal_overlay = document.createElement('div');
+        const modal_container = document.createElement('div');
+        const modal = document.createElement('div');
+        const modal_head = document.createElement('div');
+        const modal_toolbar = document.createElement('div');
+        const modal_content = document.createElement('div');
+        const close_button = document.createElement('button');
         // generate contents and add behaviours
-        modal_head.innerHTML = "<h2 class='DMActivity-title js-ariaTitle'>Bookmarks</h2>";
-        close_button.innerHTML = "<span class=\"Icon Icon--close Icon--medium\"></span>\n          <span class=\"u-hiddenVisually\">Close</span>";
+        modal_head.innerHTML = `<h2 class='DMActivity-title js-ariaTitle'>Bookmarks</h2>`;
+        close_button.innerHTML = `<span class="Icon Icon--close Icon--medium"></span>
+          <span class="u-hiddenVisually">Close</span>`;
         close_button.addEventListener('click', this.closeModal, false);
-        modal_content.innerHTML = "<div class=\"DMActivity-body js-ariaBody\">\n      <div class=\"DMInbox-content u-scrollY\">\n        <div class=\"DMInbox-primary\">\n          <ul class=\"DMInbox-conversations\">\n          </ul>\n        </div>\n      </div>\n    </div>";
-        var bookmarkList = modal_content.querySelector('ul.DMInbox-conversations');
+        modal_content.innerHTML = `<div class="DMActivity-body js-ariaBody">
+      <div class="DMInbox-content u-scrollY">
+        <div class="DMInbox-primary">
+          <ul class="DMInbox-conversations">
+          </ul>
+        </div>
+      </div>
+    </div>`;
+        const bookmarkList = modal_content.querySelector('ul.DMInbox-conversations');
         // style
         modal_overlay.className = 'DMDialog modal-container bookmark-modal';
         modal_container.className = 'modal is-autoPosition';
@@ -113,32 +124,96 @@ var BookmarksDOM = /** @class */ (function () {
         modal.appendChild(modal_content);
         modal_container.appendChild(modal);
         modal_overlay.appendChild(modal_container);
-        return { bookmarkList: bookmarkList, modal_overlay: modal_overlay, modal: modal };
-    };
-    BookmarksDOM.prototype.popModal = function () {
-        this.configureModal();
-        //displayBookmakrs()
-    };
-    BookmarksDOM.prototype.configureModal = function () {
+        return { bookmarkList, modal_overlay, modal };
+    }
+    displayBookmarks() {
+        this.dataRecieved.then((e) => {
+            let tweets = this.bd.tweets;
+            let users = this.bd.users;
+            this.putBookmarks(tweets, users);
+        });
+    }
+    putBookmarks(tweets, users) {
+        tweets.forEach((tweet) => {
+            this.bd.modal.bookmarkList.appendChild(this.generateBookmarkItem({ tweet: tweet, user: users[tweet.user_id_str] }));
+        });
+    }
+    generateBookmarkItem(tweet) {
+        const li = document.createElement('li');
+        const divs = [0, 1, 2, 3, 4].map((d) => document.createElement('div'));
+        li.className = 'DMInboxItem';
+        divs[0].className = 'DMInboxItem-avatar';
+        divs[1].className = 'DMInboxItem-title account-group';
+        divs[2].className = 'u-posRelative';
+        divs[3].className = 'DMInboxItem-header';
+        divs[4].className = 'bookmark-links';
+        // change content
+        divs[0].innerHTML = `<a href='' class='js-action-profile js-user-profile-link'>
+    <div class='DMAvatar DMAvatar--1 u-chromeOverflowFix'>
+    <span class='DMAvatar-container'> <img class='DMAvatar-image'></div> </span>
+    </div>
+    </a>`;
+        divs[1].innerHTML = `<b class='fullname'></b>
+    <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>
+    <span class='username u-dir u-textTruncate'>@<b></b></span>`;
+        divs[2].innerHTML = `<p class='DMInboxItem-snippet' style='max-height: 100%'></p>`;
+        divs[3].innerHTML = `<a href='#' target='__blank'>Show thread</a>`;
+        divs[4].innerHTML = `<b>Links:</b><br/><ul></ul>`;
+        // assign
+        const avatar = divs[0].querySelector('img');
+        const name = divs[1].querySelector('b');
+        const username = divs[1].querySelector('span b');
+        const tweetText = divs[2].querySelector('p');
+        const linkList = divs[4].querySelector('ul');
+        const threadAnchor = divs[3].querySelector('a');
+        // apply
+        avatar.src = tweet.user.profile_image_url_https;
+        name.innerText = tweet.user.name;
+        username.innerText = tweet.user.screen_name;
+        tweetText.innerText = tweet.tweet.full_text;
+        threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`;
+        // append
+        li.appendChild(divs[0]);
+        li.appendChild(divs[1]);
+        li.appendChild(divs[3]);
+        li.appendChild(divs[2]);
+        // add links if any
+        //// if(tweet.tweet.entities.urls.length > 0){
+        ////   tweet.tweet.entities.urls.forEach(function(url: any){
+        ////     let li = document.createElement('li')
+        ////     let a = document.createElement('a')
+        ////     a.href = url.expanded_url
+        ////     a.innerText = url.display_url
+        ////     li.appendChild(a)
+        ////     linkList.appendChild(li)
+        ////   })
+        ////   li.appendChild(divs[4])
+        //// }
+        return li;
+    }
+    configureModal() {
         setTimeout(function () {
-            var somePoint = document.elementFromPoint(0, 1);
+            let somePoint = document.elementFromPoint(0, 1);
             somePoint.click(); // hide dm modal
         }, 5);
-        // put the generated modal into the body
-        var body = document.querySelector("body");
-        this.bd.modal = this.generateModal();
-        body.appendChild(this.bd.modal.modal_overlay);
-    };
-    BookmarksDOM.prototype.placeNavButton = function () {
-        this.generateNavListItem('Bookmarks', 'heartBadge');
-    };
-    BookmarksDOM.prototype.watchHeaders = function () {
-        var _this = this;
-        window.browser.runtime.sendMessage({ funcName: 'getAuth' }, function (response) {
-            _this.bd.setHeaders(response.headers);
-            _this.bd.fetchBookmarks();
+        this.dataRecieved.then((e) => {
+            // put the generated modal into the body
+            const body = document.querySelector("body");
+            this.bd.modal = this.generateModal();
+            body.appendChild(this.bd.modal.modal_overlay);
         });
-    };
-    return BookmarksDOM;
-}());
-var ext = new BookmarksDOM();
+    }
+    placeNavButton() {
+        this.generateNavListItem('Bookmarks', 'heartBadge');
+    }
+    watchHeaders() {
+        window.browser.runtime.sendMessage({ funcName: 'getAuth' }, (response) => {
+            this.bd.setHeaders(response.headers);
+            this.bd.fetchBookmarks()
+                .then((e) => {
+                this.dataRecieved = Promise.resolve();
+            });
+        });
+    }
+}
+const ext = new BookmarksDOM();
