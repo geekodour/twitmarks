@@ -13,7 +13,7 @@
 }
 
 .hide-lm-btn{
-  display: none;
+  display: none !important;
 }
 
 .bookmarks-shw-thd{

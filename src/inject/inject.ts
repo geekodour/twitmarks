@@ -1,7 +1,7 @@
-interface Window {
-  browser?: any;
-  msBrowser?: any;
-}
+//interface Window {
+//  browser?: any;
+//  msBrowser?: any;
+//}
 
 window.browser = (function () {
   return window.msBrowser || window.browser || window.chrome;
@@ -83,14 +83,13 @@ class BookmarksData {
 
   }
 
-  unBookmarkATweet(tweetid: string){ 
+  unBookmarkATweet(tweetid: string, event: Event){ 
     const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
-    const data = [`tweetid=${tweetid}`, `tweet_mode=extended`]
+    const data = [`tweet_id=${tweetid}`, `tweet_mode=extended`]
     const h: Headers = new Headers()
     this.headers.forEach((o)=>{ h.append(o.name, o.value) })
     h.append("content-type", "application/x-www-form-urlencoded")
     const request: Request = new Request(removeUrl, { headers: h })
-
     fetch(request, {
         method: "POST",
         credentials: "same-origin",
@@ -98,10 +97,12 @@ class BookmarksData {
     })
     .then(response => response.json())
     .then((e)=>{
-      console.log(e);
+      this.tweets = this.tweets.filter((t)=>t.id_str !== tweetid);
+      const ubBtn: Element = event.target as Element;
+      const parentDiv: Element = ubBtn.parentNode.parentNode as Element;
+      parentDiv.classList.add('hide-lm-btn')
     })
-    //redirect: "follow",
-    //referrer: "no-referrer",
+    .catch((err)=>{console.log(err)})
   }
 }
 
@@ -268,10 +269,9 @@ class BookmarksDOM {
     username.innerText = tweet.user.screen_name
     tweetText.innerText = tweet.tweet.full_text;
     threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`
-    unBookmarkBtn.addEventListener('click',()=>{
+    unBookmarkBtn.addEventListener('click',(e)=>{
       let tweetid = tweet.tweet.id_str;
-      this.bd.unBookmarkATweet(tweetid);
-      console.log('DONEEEE');
+      this.bd.unBookmarkATweet(tweetid,e);
     }, false)
   
     // append

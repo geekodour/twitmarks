@@ -1,3 +1,7 @@
+//interface Window {
+//  browser?: any;
+//  msBrowser?: any;
+//}
 window.browser = (function () {
     return window.msBrowser || window.browser || window.chrome;
 })();
@@ -54,9 +58,9 @@ class BookmarksData {
     }
     bookmarkATweet(tweetid) {
     }
-    unBookmarkATweet(tweetid) {
+    unBookmarkATweet(tweetid, event) {
         const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
-        const data = [`tweetid=${tweetid}`, `tweet_mode=extended`];
+        const data = [`tweet_id=${tweetid}`, `tweet_mode=extended`];
         const h = new Headers();
         this.headers.forEach((o) => { h.append(o.name, o.value); });
         h.append("content-type", "application/x-www-form-urlencoded");
@@ -68,10 +72,12 @@ class BookmarksData {
         })
             .then(response => response.json())
             .then((e) => {
-            console.log(e);
-        });
-        //redirect: "follow",
-        //referrer: "no-referrer",
+            this.tweets = this.tweets.filter((t) => t.id_str !== tweetid);
+            const ubBtn = event.target;
+            const parentDiv = ubBtn.parentNode.parentNode;
+            parentDiv.classList.add('hide-lm-btn');
+        })
+            .catch((err) => { console.log(err); });
     }
 }
 class BookmarksDOM {
@@ -197,7 +203,7 @@ class BookmarksDOM {
       style='max-height: 100%; cursor: default;color: #14171a;'
       ></p>`;
         divs[3].innerHTML = `<a href='#' target='__blank' class='bookmarks-shw-thd'>Show thread</a>&nbsp;
-    <button class='unbookmark-btn'>Unbookmark</button>`;
+    <a class='unbookmark-btn'>Unbookmark</a>`;
         divs[4].innerHTML = `<b>Links:</b><br/><ul></ul>`;
         // assign
         const avatar = divs[0].querySelector('img');
@@ -206,6 +212,7 @@ class BookmarksDOM {
         const tweetText = divs[2].querySelector('p');
         const linkList = divs[4].querySelector('ul');
         const threadAnchor = divs[3].querySelector('a');
+        const unBookmarkBtn = divs[3].querySelector('a.unbookmark-btn');
         // apply
         let tweetFullText = tweet.tweet.full_text;
         avatar.src = tweet.user.profile_image_url_https;
@@ -213,6 +220,10 @@ class BookmarksDOM {
         username.innerText = tweet.user.screen_name;
         tweetText.innerText = tweet.tweet.full_text;
         threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`;
+        unBookmarkBtn.addEventListener('click', (e) => {
+            let tweetid = tweet.tweet.id_str;
+            this.bd.unBookmarkATweet(tweetid, e);
+        }, false);
         // append
         li.appendChild(divs[0]);
         li.appendChild(divs[1]);
