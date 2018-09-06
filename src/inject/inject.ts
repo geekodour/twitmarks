@@ -84,7 +84,24 @@ class BookmarksData {
   }
 
   unBookmarkATweet(tweetid: string){ 
+    const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
+    const data = [`tweetid=${tweetid}`, `tweet_mode=extended`]
+    const h: Headers = new Headers()
+    this.headers.forEach((o)=>{ h.append(o.name, o.value) })
+    h.append("content-type", "application/x-www-form-urlencoded")
+    const request: Request = new Request(removeUrl, { headers: h })
 
+    fetch(request, {
+        method: "POST",
+        credentials: "same-origin",
+        body: data.join('&')
+    })
+    .then(response => response.json())
+    .then((e)=>{
+      console.log(e);
+    })
+    //redirect: "follow",
+    //referrer: "no-referrer",
   }
 }
 
@@ -225,10 +242,14 @@ class BookmarksDOM {
     </div>
     </a>`
     divs[1].innerHTML = `<b class='fullname'></b>
-    <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>
+    <span class='UserBadges'></span><span class='UserNameBreak'></span>
     <span class='username u-dir u-textTruncate'>@<b></b></span>`
-    divs[2].innerHTML = `<p class='DMInboxItem-snippet' style='max-height: 100%'></p>`
-    divs[3].innerHTML = `<a href='#' target='__blank'>Show thread</a>`
+    divs[2].innerHTML = `<p 
+      class='DMInboxItem-snippet' 
+      style='max-height: 100%; cursor: default;color: #14171a;'
+      ></p>`
+    divs[3].innerHTML = `<a href='#' target='__blank' class='bookmarks-shw-thd'>Show thread</a>&nbsp;
+    <a class='unbookmark-btn'>Unbookmark</a>`
     divs[4].innerHTML = `<b>Links:</b><br/><ul></ul>`
   
     // assign
@@ -238,6 +259,7 @@ class BookmarksDOM {
     const tweetText = divs[2].querySelector('p');
     const linkList = divs[4].querySelector('ul');
     const threadAnchor = divs[3].querySelector('a');
+    const unBookmarkBtn = divs[3].querySelector('a.unbookmark-btn');
   
     // apply
     let tweetFullText = tweet.tweet.full_text;
@@ -246,6 +268,11 @@ class BookmarksDOM {
     username.innerText = tweet.user.screen_name
     tweetText.innerText = tweet.tweet.full_text;
     threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`
+    unBookmarkBtn.addEventListener('click',()=>{
+      let tweetid = tweet.tweet.id_str;
+      this.bd.unBookmarkATweet(tweetid);
+      console.log('DONEEEE');
+    }, false)
   
     // append
     li.appendChild(divs[0])

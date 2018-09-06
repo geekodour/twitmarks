@@ -55,6 +55,23 @@ class BookmarksData {
     bookmarkATweet(tweetid) {
     }
     unBookmarkATweet(tweetid) {
+        const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
+        const data = [`tweetid=${tweetid}`, `tweet_mode=extended`];
+        const h = new Headers();
+        this.headers.forEach((o) => { h.append(o.name, o.value); });
+        h.append("content-type", "application/x-www-form-urlencoded");
+        const request = new Request(removeUrl, { headers: h });
+        fetch(request, {
+            method: "POST",
+            credentials: "same-origin",
+            body: data.join('&')
+        })
+            .then(response => response.json())
+            .then((e) => {
+            console.log(e);
+        });
+        //redirect: "follow",
+        //referrer: "no-referrer",
     }
 }
 class BookmarksDOM {
@@ -173,10 +190,14 @@ class BookmarksDOM {
     </div>
     </a>`;
         divs[1].innerHTML = `<b class='fullname'></b>
-    <span class='UserBadges'></span><span class='UserNameBreak'>&nbsp;</span>
+    <span class='UserBadges'></span><span class='UserNameBreak'></span>
     <span class='username u-dir u-textTruncate'>@<b></b></span>`;
-        divs[2].innerHTML = `<p class='DMInboxItem-snippet' style='max-height: 100%'></p>`;
-        divs[3].innerHTML = `<a href='#' target='__blank'>Show thread</a>`;
+        divs[2].innerHTML = `<p 
+      class='DMInboxItem-snippet' 
+      style='max-height: 100%; cursor: default;color: #14171a;'
+      ></p>`;
+        divs[3].innerHTML = `<a href='#' target='__blank' class='bookmarks-shw-thd'>Show thread</a>&nbsp;
+    <button class='unbookmark-btn'>Unbookmark</button>`;
         divs[4].innerHTML = `<b>Links:</b><br/><ul></ul>`;
         // assign
         const avatar = divs[0].querySelector('img');

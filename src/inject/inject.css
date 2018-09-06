@@ -15,3 +15,12 @@
 .hide-lm-btn{
   display: none;
 }
+
+.bookmarks-shw-thd{
+  color: #00aced;
+  font-weight: 600;
+}
+.unbookmark-btn{
+  color: #0084b4;
+  font-weight: 600;
+}
