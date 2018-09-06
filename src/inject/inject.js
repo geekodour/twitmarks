@@ -3,30 +3,32 @@ window.browser = (function () {
 })();
 class BookmarksData {
     constructor() {
-        //this.modal = { };
         this.tweets = [];
         this.users = {};
         this.nextCursor = null;
         this.limit = 20;
+        this.page = 0;
         this.apiUrl = 'https://api.twitter.com/2/timeline/bookmark.json';
     }
     setHeaders(headers) {
         this.headers = headers;
     }
     fetchBookmarks() {
-        // check if last page is reached
-        // hide load more button if last is reached
         let params = [
             `count=${this.limit}`,
             `include_profile_interstitial_type=1`,
             `include_reply_count=1`,
+            `include_blocking=1`,
+            `include_blocked_by=1`,
             `tweet_mode=extended`,
             `include_can_dm=1`,
+            `include_followed_by=1`,
+            `include_want_retweets=1`,
             `include_can_media_tag=1`,
             `cards_platform=Web-12`
         ].join('&');
         if (this.nextCursor) {
-            params += `&cursor=${this.nextCursor}`;
+            params += `&cursor=${encodeURIComponent(this.nextCursor)}`;
         }
         const url = `${this.apiUrl}?${params}`;
         const h = new Headers();
@@ -36,11 +38,17 @@ class BookmarksData {
             .then((e) => { return e.json(); })
             .then((e) => {
             let tweets = e.globalObjects.tweets;
-            this.nextCursor = e.timeline.instructions["0"]
-                .addEntries.entries[this.limit + 1]
-                .content.operation.cursor.value;
+            let entries = e.timeline.instructions["0"].addEntries.entries;
+            let nextCursor = entries[entries.length - 1].content.operation.cursor.value;
+            if (nextCursor === this.nextCursor) {
+                document.querySelector('.twitter-bookmarks-lm-btn').classList.add('hide-lm-btn');
+            }
+            else {
+                this.nextCursor = nextCursor;
+            }
             this.tweets = [...this.tweets, ...Object.keys(tweets).map((k) => tweets[k])];
             this.users = Object.assign({}, this.users, e.globalObjects.users);
+            this.page += 1;
         })
             .catch(function (err) { console.log(err); });
     }
@@ -94,6 +102,7 @@ class BookmarksDOM {
         const modal_head = document.createElement('div');
         const modal_toolbar = document.createElement('div');
         const modal_content = document.createElement('div');
+        const load_more_button = document.createElement('button');
         const close_button = document.createElement('button');
         // generate contents and add behaviours
         modal_head.innerHTML = `<h2 class='DMActivity-title js-ariaTitle'>Bookmarks</h2>`;
@@ -108,6 +117,14 @@ class BookmarksDOM {
         </div>
       </div>
     </div>`;
+        load_more_button.innerText = `Load More`;
+        load_more_button.addEventListener('click', () => {
+            let offset = this.bd.page * this.bd.limit;
+            this.bd.fetchBookmarks()
+                .then((e) => {
+                this.putBookmarks(this.bd.tweets.slice(offset), this.bd.users);
+            });
+        }, false);
         const bookmarkList = modal_content.querySelector('ul.DMInbox-conversations');
         // style
         modal_overlay.className = 'DMDialog modal-container bookmark-modal';
@@ -117,11 +134,13 @@ class BookmarksDOM {
         modal_toolbar.className = 'DMActivity-toolbar';
         modal_content.className = 'DMActivity-container';
         close_button.className = 'DMActivity-close js-close u-textUserColorHover';
+        load_more_button.className = 'twitter-bookmarks-lm-btn';
         // append
         modal_toolbar.appendChild(close_button);
         modal_head.appendChild(modal_toolbar);
         modal.appendChild(modal_head);
         modal.appendChild(modal_content);
+        modal.appendChild(load_more_button);
         modal_container.appendChild(modal);
         modal_overlay.appendChild(modal_container);
         return { bookmarkList, modal_overlay, modal };
@@ -167,7 +186,6 @@ class BookmarksDOM {
         const linkList = divs[4].querySelector('ul');
         const threadAnchor = divs[3].querySelector('a');
         // apply
-        console.log(tweet);
         let tweetFullText = tweet.tweet.full_text;
         avatar.src = tweet.user.profile_image_url_https;
         name.innerText = tweet.user.name;
@@ -181,10 +199,6 @@ class BookmarksDOM {
         li.appendChild(divs[2]);
         // add links if any
         const entities = Object.keys(tweet.tweet.entities).map((k) => k);
-        console.log(entities);
-        /**
-         * hashtags" "symbols" "user_mentions" "urls" "media"
-         */
         entities.forEach((entityName) => {
             tweet.tweet.entities[entityName].forEach((e) => {
                 if (entityName === "urls") {
@@ -205,9 +219,9 @@ class BookmarksDOM {
             <a href="https://twitter.com/${e.screen_name}">${extractedText}</a>
           `);
                 }
+                // TODO: Hashtags and Symbols
             });
         });
-        //tweetText.innerHTML = tweetFullText;
         return li;
     }
     configureModal() {
