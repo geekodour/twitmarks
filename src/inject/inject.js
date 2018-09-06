@@ -86,6 +86,13 @@ class BookmarksDOM {
         this.dataRecieved = new Promise((resolve, reject) => { });
         this.placeNavButton();
         this.watchHeaders();
+        // call the command to place bookmark icon to each tweet
+        this.addBookmarkButtonToTweets();
+    }
+    addBookmarkButtonToTweets() {
+        window.browser.runtime.sendMessage({ funcName: 'checkTabUpdate' }, (response) => {
+            console.log('yay');
+        });
     }
     generateNavListItem(name, icon) {
         const li = document.createElement('li');

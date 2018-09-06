@@ -30,6 +30,15 @@ window.browser.runtime.onMessage.addListener(
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
 
+    if(request.funcName === "checkTabUpdate"){
+      window.browser.tabs.onUpdated.addListener(
+        (tabId: any, changeInfo: any, tab: any) => {
+          console.log(tab.url);
+          // if tab.url match our regex, send a true response to content script
+        }
+      );
+    }
+
     if(request.funcName === "getAuth"){
       // run the following only when bookmark is clicked
       const headerNames = requiredHeaders.map((h)=>h.name);

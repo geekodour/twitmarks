@@ -19,6 +19,7 @@
     "default_popup": "src/page_action/page_action.html"
   },
   "permissions": [
+    "tabs",
     "activeTab",
     "webRequest",
     "cookies",
@@ -30,6 +31,11 @@
       "matches": [ "https://*.twitter.com/*" ],
       "css": [ "src/inject/inject.css" ],
       "js": [ "src/inject/inject.js" ]
+    },
+    {
+      "matches": [ "https://twitter.com/*/status/*" ],
+      "css": [ "src/inject/inject.css" ],
+      "js": [ "src/inject/inject_addbm.js" ]
     }
   ]
 }

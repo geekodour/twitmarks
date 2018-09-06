@@ -7,7 +7,6 @@ window.browser = (function () {
   return window.msBrowser || window.browser || window.chrome;
 })()
 
-
 class BookmarksData {
   modal: {
     bookmarkList: Element,
@@ -116,6 +115,16 @@ class BookmarksDOM {
     this.dataRecieved = new Promise((resolve,reject)=>{});
     this.placeNavButton();
     this.watchHeaders();
+
+    // call the command to place bookmark icon to each tweet
+    this.addBookmarkButtonToTweets();
+  }
+
+  addBookmarkButtonToTweets(){
+
+    window.browser.runtime.sendMessage({funcName: 'checkTabUpdate'}, (response: any) => {
+      console.log('yay')
+    })
   }
 
   generateNavListItem(name: string, icon: string) : void{
@@ -272,7 +281,7 @@ class BookmarksDOM {
     unBookmarkBtn.addEventListener('click',(e)=>{
       let tweetid = tweet.tweet.id_str;
       this.bd.unBookmarkATweet(tweetid,e);
-    }, false)
+    }, false);
   
     // append
     li.appendChild(divs[0])

@@ -25,6 +25,11 @@ const requiredHeaders = [
 window.browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
+    if (request.funcName === "checkTabUpdate") {
+        window.browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+            console.log(tab.url);
+        });
+    }
     if (request.funcName === "getAuth") {
         // run the following only when bookmark is clicked
         const headerNames = requiredHeaders.map((h) => h.name);
