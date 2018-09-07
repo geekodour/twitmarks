@@ -78,7 +78,24 @@ class BookmarksData {
       .catch(function(err){console.log(err)})
   }
 
-  bookmarkATweet(tweetid: string){ 
+  bookmarkATweet(tweetid: string, event: Event){ 
+    const addUrl = 'https://api.twitter.com/1.1/bookmark/entries/add.json';
+    const data = [`tweet_id=${tweetid}`, `tweet_mode=extended`]
+    const h: Headers = new Headers()
+    this.headers.forEach((o)=>{ h.append(o.name, o.value) })
+    h.append("content-type", "application/x-www-form-urlencoded")
+    const request: Request = new Request(addUrl, { headers: h })
+    fetch(request, {
+        method: "POST",
+        credentials: "same-origin",
+        body: data.join('&')
+    })
+    .then(response => response.json())
+    .then((e)=>{
+      const bBtn: HTMLElement = event.target as HTMLElement;
+      bBtn.innerText = "Bookmarked!";
+    })
+    .catch((err)=>{console.log(err)})
 
   }
 
@@ -123,7 +140,31 @@ class BookmarksDOM {
   addBookmarkButtonToTweets(){
 
     window.browser.runtime.sendMessage({funcName: 'checkTabUpdate'}, (response: any) => {
-      console.log('yay')
+      if(response.addBookmark){
+        const tweetContainer: HTMLElement =  document.querySelector('.permalink-inner.permalink-tweet-container');
+        let tweet_id = tweetContainer.querySelector('div').getAttribute('data-tweet-id');
+
+        if(tweetContainer){
+
+          if(!document.querySelector('button.bookmark-btn')){
+            const bookmarkButton: HTMLElement = document.createElement('button');
+            let btnCls = 'ProfileTweet-actionButton u-textUserColorHover js-actionButton'
+            bookmarkButton.className = 'bookmark-btn '+btnCls;
+            bookmarkButton.innerText = 'Add to bookmarks'
+            bookmarkButton.addEventListener('click',(e)=>{
+              this.bd.bookmarkATweet(String(tweet_id), e);
+            })
+            const bookmarkButtonHolder: HTMLElement = document.createElement('div');
+            bookmarkButtonHolder.className = 'ProfileTweet-action ProfileTweet-action--bm'
+            bookmarkButtonHolder.appendChild(bookmarkButton);
+            // apply
+            const buttonContainer: HTMLElement = document.querySelector('div.ProfileTweet-actionList.js-actions');
+            buttonContainer.appendChild(bookmarkButtonHolder)
+          }
+
+
+        }
+      }
     })
   }
 

@@ -33,10 +33,12 @@ window.browser.runtime.onMessage.addListener(
     if(request.funcName === "checkTabUpdate"){
       window.browser.tabs.onUpdated.addListener(
         (tabId: any, changeInfo: any, tab: any) => {
-          console.log(tab.url);
-          // if tab.url match our regex, send a true response to content script
+          let url: string = tab.url;
+          const rePattern: RegExp = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
+          sendResponse({ addBookmark: rePattern.test(url) });
         }
       );
+      return true;
     }
 
     if(request.funcName === "getAuth"){

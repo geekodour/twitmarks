@@ -27,8 +27,11 @@ window.browser.runtime.onMessage.addListener(function (request, sender, sendResp
     window.browser.pageAction.show(sender.tab.id);
     if (request.funcName === "checkTabUpdate") {
         window.browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-            console.log(tab.url);
+            let url = tab.url;
+            const rePattern = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
+            sendResponse({ addBookmark: rePattern.test(url) });
         });
+        return true;
     }
     if (request.funcName === "getAuth") {
         // run the following only when bookmark is clicked

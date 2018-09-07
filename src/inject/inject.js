@@ -56,7 +56,24 @@ class BookmarksData {
         })
             .catch(function (err) { console.log(err); });
     }
-    bookmarkATweet(tweetid) {
+    bookmarkATweet(tweetid, event) {
+        const addUrl = 'https://api.twitter.com/1.1/bookmark/entries/add.json';
+        const data = [`tweet_id=${tweetid}`, `tweet_mode=extended`];
+        const h = new Headers();
+        this.headers.forEach((o) => { h.append(o.name, o.value); });
+        h.append("content-type", "application/x-www-form-urlencoded");
+        const request = new Request(addUrl, { headers: h });
+        fetch(request, {
+            method: "POST",
+            credentials: "same-origin",
+            body: data.join('&')
+        })
+            .then(response => response.json())
+            .then((e) => {
+            const bBtn = event.target;
+            bBtn.innerText = "Bookmarked!";
+        })
+            .catch((err) => { console.log(err); });
     }
     unBookmarkATweet(tweetid, event) {
         const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
@@ -91,7 +108,27 @@ class BookmarksDOM {
     }
     addBookmarkButtonToTweets() {
         window.browser.runtime.sendMessage({ funcName: 'checkTabUpdate' }, (response) => {
-            console.log('yay');
+            if (response.addBookmark) {
+                const tweetContainer = document.querySelector('.permalink-inner.permalink-tweet-container');
+                let tweet_id = tweetContainer.querySelector('div').getAttribute('data-tweet-id');
+                if (tweetContainer) {
+                    if (!document.querySelector('button.bookmark-btn')) {
+                        const bookmarkButton = document.createElement('button');
+                        let btnCls = 'ProfileTweet-actionButton u-textUserColorHover js-actionButton';
+                        bookmarkButton.className = 'bookmark-btn ' + btnCls;
+                        bookmarkButton.innerText = 'Add to bookmarks';
+                        bookmarkButton.addEventListener('click', (e) => {
+                            this.bd.bookmarkATweet(String(tweet_id), e);
+                        });
+                        const bookmarkButtonHolder = document.createElement('div');
+                        bookmarkButtonHolder.className = 'ProfileTweet-action ProfileTweet-action--bm';
+                        bookmarkButtonHolder.appendChild(bookmarkButton);
+                        // apply
+                        const buttonContainer = document.querySelector('div.ProfileTweet-actionList.js-actions');
+                        buttonContainer.appendChild(bookmarkButtonHolder);
+                    }
+                }
+            }
         });
     }
     generateNavListItem(name, icon) {
