@@ -25,14 +25,6 @@ const requiredHeaders = [
 window.browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
-    if (request.funcName === "checkTabUpdate") {
-        window.browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-            let url = tab.url;
-            const rePattern = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
-            sendResponse({ addBookmark: rePattern.test(url) });
-        });
-        return true;
-    }
     if (request.funcName === "getAuth") {
         // run the following only when bookmark is clicked
         const headerNames = requiredHeaders.map((h) => h.name);
@@ -53,4 +45,12 @@ window.browser.runtime.onMessage.addListener(function (request, sender, sendResp
         }, { urls: ["https://*.twitter.com/*"] }, ["requestHeaders"]);
         return true;
     }
+});
+window.browser.runtime.onConnect.addListener(function (port) {
+    console.assert(port.name == "checkTabUpdate");
+    window.browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+        let url = tab.url;
+        const rePattern = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
+        port.postMessage({ addBookmark: rePattern.test(url) });
+    });
 });

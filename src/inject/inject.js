@@ -1,7 +1,3 @@
-//interface Window {
-//  browser?: any;
-//  msBrowser?: any;
-//}
 window.browser = (function () {
     return window.msBrowser || window.browser || window.chrome;
 })();
@@ -56,24 +52,36 @@ class BookmarksData {
         })
             .catch(function (err) { console.log(err); });
     }
+    reset() {
+        this.nextCursor = null;
+        this.tweets = [];
+        this.users = [];
+        this.page = 0;
+    }
     bookmarkATweet(tweetid, event) {
         const addUrl = 'https://api.twitter.com/1.1/bookmark/entries/add.json';
         const data = [`tweet_id=${tweetid}`, `tweet_mode=extended`];
         const h = new Headers();
-        this.headers.forEach((o) => { h.append(o.name, o.value); });
-        h.append("content-type", "application/x-www-form-urlencoded");
-        const request = new Request(addUrl, { headers: h });
-        fetch(request, {
-            method: "POST",
-            credentials: "same-origin",
-            body: data.join('&')
-        })
-            .then(response => response.json())
-            .then((e) => {
-            const bBtn = event.target;
-            bBtn.innerText = "Bookmarked!";
-        })
-            .catch((err) => { console.log(err); });
+        if (this.headers) {
+            this.headers.forEach((o) => { h.append(o.name, o.value); });
+            h.append("content-type", "application/x-www-form-urlencoded");
+            const request = new Request(addUrl, { headers: h });
+            fetch(request, {
+                method: "POST",
+                credentials: "same-origin",
+                body: data.join('&')
+            })
+                .then(response => response.json())
+                .then((e) => {
+                // refresh bookmarks
+                this.reset();
+                this.fetchBookmarks();
+                // change dom
+                const bBtn = event.target;
+                bBtn.innerText = "Bookmarked!";
+            })
+                .catch((err) => { console.log(err); });
+        }
     }
     unBookmarkATweet(tweetid, event) {
         const removeUrl = 'https://api.twitter.com/1.1/bookmark/entries/remove.json';
@@ -89,6 +97,7 @@ class BookmarksData {
         })
             .then(response => response.json())
             .then((e) => {
+            console.log(e);
             this.tweets = this.tweets.filter((t) => t.id_str !== tweetid);
             const ubBtn = event.target;
             const parentDiv = ubBtn.parentNode.parentNode;
@@ -99,6 +108,7 @@ class BookmarksData {
 }
 class BookmarksDOM {
     constructor() {
+        // place navbar icon and get auth creds
         this.bd = new BookmarksData();
         this.dataRecieved = new Promise((resolve, reject) => { });
         this.placeNavButton();
@@ -107,24 +117,25 @@ class BookmarksDOM {
         this.addBookmarkButtonToTweets();
     }
     addBookmarkButtonToTweets() {
-        window.browser.runtime.sendMessage({ funcName: 'checkTabUpdate' }, (response) => {
-            if (response.addBookmark) {
+        this.tabUpdatePort = window.browser.runtime.connect({ name: "checkTabUpdate" });
+        this.tabUpdatePort.onMessage.addListener((msg) => {
+            if (msg.addBookmark) {
                 const tweetContainer = document.querySelector('.permalink-inner.permalink-tweet-container');
                 let tweet_id = tweetContainer.querySelector('div').getAttribute('data-tweet-id');
                 if (tweetContainer) {
-                    if (!document.querySelector('button.bookmark-btn')) {
+                    if (!tweetContainer.querySelector('button.bookmark-btn')) {
                         const bookmarkButton = document.createElement('button');
                         let btnCls = 'ProfileTweet-actionButton u-textUserColorHover js-actionButton';
                         bookmarkButton.className = 'bookmark-btn ' + btnCls;
                         bookmarkButton.innerText = 'Add to bookmarks';
                         bookmarkButton.addEventListener('click', (e) => {
                             this.bd.bookmarkATweet(String(tweet_id), e);
-                        });
+                        }, false);
                         const bookmarkButtonHolder = document.createElement('div');
                         bookmarkButtonHolder.className = 'ProfileTweet-action ProfileTweet-action--bm';
                         bookmarkButtonHolder.appendChild(bookmarkButton);
                         // apply
-                        const buttonContainer = document.querySelector('div.ProfileTweet-actionList.js-actions');
+                        const buttonContainer = tweetContainer.querySelector('div.ProfileTweet-actionList.js-actions');
                         buttonContainer.appendChild(bookmarkButtonHolder);
                     }
                 }
@@ -266,6 +277,7 @@ class BookmarksDOM {
         threadAnchor.href = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.tweet.id_str}`;
         unBookmarkBtn.addEventListener('click', (e) => {
             let tweetid = tweet.tweet.id_str;
+            console.log(tweetid);
             this.bd.unBookmarkATweet(tweetid, e);
         }, false);
         // append

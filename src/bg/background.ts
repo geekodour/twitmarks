@@ -30,17 +30,6 @@ window.browser.runtime.onMessage.addListener(
     // color the browser icon
     window.browser.pageAction.show(sender.tab.id);
 
-    if(request.funcName === "checkTabUpdate"){
-      window.browser.tabs.onUpdated.addListener(
-        (tabId: any, changeInfo: any, tab: any) => {
-          let url: string = tab.url;
-          const rePattern: RegExp = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
-          sendResponse({ addBookmark: rePattern.test(url) });
-        }
-      );
-      return true;
-    }
-
     if(request.funcName === "getAuth"){
       // run the following only when bookmark is clicked
       const headerNames = requiredHeaders.map((h)=>h.name);
@@ -73,3 +62,15 @@ window.browser.runtime.onMessage.addListener(
     }
 
   });
+
+
+window.browser.runtime.onConnect.addListener(function(port: chrome.runtime.Port) {
+  console.assert(port.name == "checkTabUpdate");
+  window.browser.tabs.onUpdated.addListener(
+    (tabId: any, changeInfo: any, tab: any) => {
+      let url: string = tab.url;
+      const rePattern: RegExp = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
+      port.postMessage({addBookmark: rePattern.test(url) });
+    }
+  );
+});
