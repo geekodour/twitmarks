@@ -346,23 +346,25 @@ class BookmarksDOM {
     entities.forEach((entityName)=>{
       tweet.tweet.entities[entityName].forEach((e: any)=>{
 
+        let inText = tweetText.innerHTML;
+
         if(entityName === "urls"){
           const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
-          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+          tweetText.innerHTML = inText.replace(extractedText,`
             <a href="${e.expanded_url}">${extractedText}</a>
           `);
         }
 
         if(entityName === "media"){
           const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
-          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+          tweetText.innerHTML = inText.replace(extractedText,`
             <img src="${e.media_url_https}" style="width:50%;display:block;"></img>
           `);
         }
 
         if(entityName === "user_mentions"){
           const extractedText = tweetFullText.substring(e.indices[0], e.indices[1]);
-          tweetText.innerHTML = tweetText.innerHTML.replace(extractedText,`
+          tweetText.innerHTML = inText.replace(extractedText,`
             <a href="https://twitter.com/${e.screen_name}">${extractedText}</a>
           `);
         }
