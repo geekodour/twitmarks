@@ -75,9 +75,9 @@ class BookmarksData {
 
   reset(){
     this.nextCursor = null;
-    this.tweets = []
-    this.users = []
-    this.page = 0
+    this.tweets = [];
+    this.users = [];
+    this.page = 0;
   }
 
   bookmarkATweet(tweetid: string, event: Event){ 
