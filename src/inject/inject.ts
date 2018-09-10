@@ -1,4 +1,3 @@
-//const browser = (function () {
 class BookmarksData {
   modal: {
     bookmarkList: Element,
