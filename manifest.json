@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "Add Twitter Bookmarks to web",
-  "homepage_url": "http://geekodour.github.com",
+  "homepage_url": "https://geekodour.github.com",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
