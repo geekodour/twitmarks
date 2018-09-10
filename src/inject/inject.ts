@@ -2,8 +2,6 @@ window.browser = (function () {
   return window.msBrowser || window.browser || window.chrome;
 })()
 
-const sanitizer = require('sanitizer');
-
 class BookmarksData {
   modal: {
     bookmarkList: Element,
@@ -355,7 +353,7 @@ class BookmarksDOM {
           let repText = inText.replace(extractedText,`
             <a href="${e.expanded_url}">${extractedText}</a>
           `);
-          tweetText.innerHTML = sanitizer.escape(repText);
+          tweetText.innerHTML = repText;
         }
 
         if(entityName === "media"){
@@ -363,7 +361,7 @@ class BookmarksDOM {
           let repText = inText.replace(extractedText,`
             <img src="${e.media_url_https}" style="width:50%;display:block;"></img>
           `);
-          tweetText.innerHTML = sanitizer.escape(repText);
+          tweetText.innerHTML = repText;
         }
 
         if(entityName === "user_mentions"){
@@ -371,7 +369,7 @@ class BookmarksDOM {
           let repText = inText.replace(extractedText,`
             <a href="https://twitter.com/${e.screen_name}">${extractedText}</a>
           `);
-          tweetText.innerHTML = sanitizer.escape(repText);
+          tweetText.innerHTML = repText;
         }
 
         // TODO: Hashtags and Symbols
