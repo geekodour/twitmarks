@@ -15,6 +15,14 @@ Twitter Bookmarks for the web and desktop.
 </h1>
 
 # Installation
+
+## Firefox
+Install it from Firefox addons - [TwitMarks](https://addons.mozilla.org/en-US/firefox/addon/twitmarks/)
+
+## Chrome
+Use manual method, have not uploaded to the chrome web store yet.
+
+## Manual
 - Clone this repo
 - Switch on Developer Mode in `More tools > extensions`
 - Click on `Load unpacked extension`
