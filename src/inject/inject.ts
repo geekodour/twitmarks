@@ -1,7 +1,4 @@
-window.browser = (function () {
-  return window.msBrowser || window.browser || window.chrome;
-})()
-
+//const browser = (function () {
 class BookmarksData {
   modal: {
     bookmarkList: Element,
@@ -148,7 +145,7 @@ class BookmarksDOM {
   }
 
   addBookmarkButtonToTweets(){
-    this.tabUpdatePort = window.browser.runtime.connect({name: "checkTabUpdate"});
+    this.tabUpdatePort = chrome.runtime.connect({name: "checkTabUpdate"});
 
     this.tabUpdatePort.onMessage.addListener((msg)=>{
       if(msg.addBookmark){
@@ -401,7 +398,7 @@ class BookmarksDOM {
   }
 
   watchHeaders(){
-    window.browser.runtime.sendMessage({funcName: 'getAuth'}, (response: any) => {
+    chrome.runtime.sendMessage({funcName: 'getAuth'}, (response: any) => {
       this.bd.setHeaders(response.headers); 
       this.bd.fetchBookmarks()
           .then((e)=>{

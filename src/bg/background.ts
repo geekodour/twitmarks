@@ -1,9 +1,3 @@
-window.browser = (function () {
-  return window.msBrowser ||
-    window.browser ||
-    window.chrome;
-})();
-
 // TODO: remove Cookie header
 const requiredHeaders = [
   {
@@ -24,17 +18,17 @@ const requiredHeaders = [
 ]
 
 // Listener
-window.browser.runtime.onMessage.addListener(
+chrome.runtime.onMessage.addListener(
   function(request: any, sender: any, sendResponse: any) {
 
     // color the browser icon
-    window.browser.pageAction.show(sender.tab.id);
+    chrome.pageAction.show(sender.tab.id);
 
     if(request.funcName === "getAuth"){
       // run the following only when bookmark is clicked
       const headerNames = requiredHeaders.map((h)=>h.name);
 
-      window.browser.webRequest.onBeforeSendHeaders.addListener(
+      chrome.webRequest.onBeforeSendHeaders.addListener(
 
         function getAllHeaders(details: any) {
 
@@ -49,7 +43,7 @@ window.browser.runtime.onMessage.addListener(
 
           // remove listener and send response if found all required headers
           if( requiredHeaders.every((a)=>a.found == true) ){
-            window.browser.webRequest.onBeforeSendHeaders.removeListener(getAllHeaders);
+            chrome.webRequest.onBeforeSendHeaders.removeListener(getAllHeaders);
             sendResponse({ headers: requiredHeaders.map(h=>h.header) });
           }
 
@@ -64,9 +58,9 @@ window.browser.runtime.onMessage.addListener(
   });
 
 
-window.browser.runtime.onConnect.addListener(function(port: chrome.runtime.Port) {
+chrome.runtime.onConnect.addListener(function(port: chrome.runtime.Port) {
   console.assert(port.name == "checkTabUpdate");
-  window.browser.tabs.onUpdated.addListener(
+  chrome.tabs.onUpdated.addListener(
     (tabId: any, changeInfo: any, tab: any) => {
       let url: string = tab.url;
       const rePattern: RegExp = /https:\/\/twitter\.com\/.+\/status\/\d+/gm;
