@@ -1,3 +1,28 @@
 .global-bookmark-nav {
   cursor: pointer;
 }
+
+.twitter-bookmarks-lm-btn{
+  padding: 1em 1em;
+  background: #00aced;
+  color: antiquewhite;
+  font-weight: 600;
+}
+.twitter-bookmarks-lm-btn:hover{
+  background: #0084b4;
+}
+
+.hide-lm-btn{
+  display: none !important;
+}
+
+.bookmarks-shw-thd{
+  color: #00aced;
+  font-weight: 600;
+  z-index: 100;
+}
+.unbookmark-btn{
+  color: #0084b4;
+  font-weight: 600;
+  z-index: 100;
+}

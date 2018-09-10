@@ -4,7 +4,8 @@
   "description": "Browser extension for twitter to add bookmarks",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,10 @@
   "homepage": "https://github.com/geekodour/twitmarks#readme",
   "dependencies": {
     "@types/chrome": "0.0.71"
+  },
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^10.9.4",
+    "typescript": "^3.0.3"
   }
 }
