@@ -1,7 +1,7 @@
 # twitmarks
 Twitter Bookmarks for the web and desktop.
 
-<h1 align="center"> 
+<h1 align="center">
 <br>
 <img width="300px;" src="./logo.png">
 </h1>
@@ -9,7 +9,7 @@ Twitter Bookmarks for the web and desktop.
 *Very much WIP, but works fine on Chrome only, will work with Firefox with small tweaks.*
 
 # Demo
-<h1 align="center"> 
+<h1 align="center">
 <br>
 <img src ="./demo3.gif" />
 </h1>
@@ -23,9 +23,12 @@ Twitter Bookmarks for the web and desktop.
 # Usage
 Just install the addon, visit twitter and you're good to go.
 
-## Note
-- Chrome deprecated inline installations: https://developer.chrome.com/webstore/inline_installation
-- Will add to firefox add ons soon.
+## Development
+The source is in typescript, after cloning this repository,
+```
+$ npm install
+$ npm run build
+```
 
 # Inspiration
 Thanks [@@aviaryan123](https://twitter.com/aviaryan123), Twitter [thread](https://twitter.com/aviaryan123/status/1020295502078914560).
