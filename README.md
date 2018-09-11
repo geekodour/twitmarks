@@ -1,10 +1,7 @@
 # twitmarks
 Twitter Bookmarks for the web and desktop.
 # Demo
-<h1 align="center">
-<br>
-<img src ="./demo3.gif" />
-</h1>
+[YouTube video](https://youtu.be/uAx7bhwkpA4) demonstrating the use of TwitMarks
 
 # Installation
 
