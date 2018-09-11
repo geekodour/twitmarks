@@ -1,13 +1,5 @@
 # twitmarks
 Twitter Bookmarks for the web and desktop.
-
-<h1 align="center">
-<br>
-<img width="300px;" src="./logo.png">
-</h1>
-
-*Very much WIP, but works fine on Chrome only, will work with Firefox with small tweaks.*
-
 # Demo
 <h1 align="center">
 <br>
