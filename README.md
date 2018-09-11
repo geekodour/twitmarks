@@ -31,7 +31,9 @@ $ npm run build
 Please read [this issue](https://github.com/geekodour/twitmarks/issues/6)
 
 # Inspiration
-Thanks [@@aviaryan123](https://twitter.com/aviaryan123), Twitter [thread](https://twitter.com/aviaryan123/status/1020295502078914560).
+Thanks [@aviaryan123](https://twitter.com/aviaryan123), Twitter [thread](https://twitter.com/aviaryan123/status/1020295502078914560).
+
+Follow me on twitter [@geekodour](https://twitter.com/geekodour)
 
 # Contributions
 Feel free to send all sorts of PRs. I wrote this extension in typescript in order to learn it, so there are many many mistakes and bad practices probably but feel free to correct them and I'll try to improve it soon. :)
