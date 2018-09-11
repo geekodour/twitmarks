@@ -27,6 +27,9 @@ $ npm install
 $ npm run build
 ```
 
+## How it works
+Please read [this issue](https://github.com/geekodour/twitmarks/issues/6)
+
 # Inspiration
 Thanks [@@aviaryan123](https://twitter.com/aviaryan123), Twitter [thread](https://twitter.com/aviaryan123/status/1020295502078914560).
 
