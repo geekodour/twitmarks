@@ -2,3 +2,4 @@ tags
 *.js
 tags.*
 node_modules
+ext

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "bundle": "bash scripts/bundle_ext.sh",
+    "clean": "rm $(find src -type f -name '*.js' | xargs ls)"
   },
   "repository": {
     "type": "git",
